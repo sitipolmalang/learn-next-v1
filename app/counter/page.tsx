@@ -5,8 +5,8 @@ import ButtonComponent from '../components/client/ButtonComponent';
 export default function CounterPage() {
     const [count, setCount] = useState(0);
 
-    const increment = () => setCount(count + 1);
-    const decrement = () => setCount(count - 1);
+    const handleIncrement = () => setCount(count + 1);
+    const handleDecrement = () => setCount(count - 1);
     const reset = () => setCount(0);
 
     return (
@@ -17,14 +17,13 @@ export default function CounterPage() {
                 <div className="text-6xl font-bold text-center text-green-600 mb-8">
                     {count}
                 </div>
-                {/* className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600" */}
 
                 <div className="flex gap-4 justify-center">
-                    <ButtonComponent label="Decrement" onClick={decrement} variant="danger" />
+                    <ButtonComponent label="Decrement" onClick={handleDecrement} variant="danger" />
                         
                     <ButtonComponent label="Reset" onClick={reset} variant="secondary" />
                         
-                    <ButtonComponent label="Increment" onClick={increment} />
+                    <ButtonComponent label="Increment" onClick={handleIncrement} />
                 </div>
             </div>
         </div>
