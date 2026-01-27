@@ -1,5 +1,5 @@
-import React from 'react';
 import ButtonComponent from './ButtonComponent';
+
 
 export default function WelcomeComponent() {
     return (
@@ -11,8 +11,9 @@ export default function WelcomeComponent() {
                 <p className="text-xl text-gray-100 mb-8">
                     We're glad to have you here
                 </p>
-                
+
                 <ButtonComponent label='Get Started' variant='primary'/>
+
             </div>
         </div>
     );
