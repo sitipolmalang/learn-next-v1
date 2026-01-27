@@ -2,31 +2,39 @@
 
 import { useState } from 'react';
 import PropsEditor from '../components/editor/PropsEditor';
-import Preview from '../components/editor/Preview';
+import ButtonOne from '../components/ui/ButtonOne';
+import { buttonSchema } from '../components/editor/schemas/button.schema';
+
+
+type ButtonProps = {
+    label: string;
+    color: string;
+    href: string;
+};
 
 export default function EditorPage() {
-    const [buttonProps, setButtonProps] = useState({
+    const [buttonProps, setButtonProps] = useState<ButtonProps>({
         label: 'Click Me',
         color: '#3b82f6',
-        href: '#',
+        href: 'google.com',
     });
 
     return (
         <div className="flex h-screen">
-            {/* Sidebar */}
-            <aside className="w-1/3 p-6 border-r bg-gray-50 text-gray-800">
+            <aside className="w-1/3 p-6 border-r bg-gray-50 text-gray-700">
                 <h2 className="text-lg font-bold mb-4">Button Props</h2>
+
                 <PropsEditor
-                    {...buttonProps}
-                    onChange={(newProps) =>
-                        setButtonProps(prev => ({ ...prev, ...newProps }))
+                    schema={buttonSchema}
+                    value={buttonProps}
+                    onChange={(newValue) =>
+                        setButtonProps(newValue as ButtonProps)
                     }
                 />
             </aside>
 
-            {/* Preview */}
-            <main className="flex-1 bg-white">
-                <Preview {...buttonProps} />
+            <main className="flex-1 flex items-center justify-center bg-white">
+                <ButtonOne {...buttonProps} />
             </main>
         </div>
     );

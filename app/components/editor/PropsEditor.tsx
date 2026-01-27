@@ -1,51 +1,44 @@
 'use client';
 
-interface PropsEditorProps {
+export type FieldSchema = {
+    type: 'text' | 'color';
     label: string;
-    color: string;
-    href: string;
-    onChange: (props: {
-        label?: string;
-        color?: string;
-        href?: string;
-    }) => void;
+};
+
+
+
+interface PropsEditorProps {
+    schema: Record<string, FieldSchema>;
+    value: Record<string, string>;
+    onChange: (value: Record<string, string>) => void;
 }
 
 export default function PropsEditor({
-    label,
-    color,
-    href,
+    schema,
+    value,
     onChange,
 }: PropsEditorProps) {
     return (
         <div className="space-y-4">
-            <div>
-                <label className="block text-sm font-medium">Label</label>
-                <input
-                    className="w-full border rounded p-2"
-                    value={label}
-                    onChange={(e) => onChange({ label: e.target.value })}
-                />
-            </div>
+            {Object.entries(schema).map(([key, field]) => (
+                <div key={key}>
+                    <label className="block text-sm font-medium mb-1">
+                        {field.label}
+                    </label>
 
-            <div>
-                <label className="block text-sm font-medium">Color</label>
-                <input
-                    type="color"
-                    className="w-full h-10"
-                    value={color}
-                    onChange={(e) => onChange({ color: e.target.value })}
-                />
-            </div>
-
-            <div>
-                <label className="block text-sm font-medium">Link (href)</label>
-                <input
-                    className="w-full border rounded p-2"
-                    value={href}
-                    onChange={(e) => onChange({ href: e.target.value })}
-                />
-            </div>
+                    <input
+                        type={field.type}
+                        value={value[key]}
+                        className="w-full border rounded p-2"
+                        onChange={(e) =>
+                            onChange({
+                                ...value,
+                                [key]: e.target.value,
+                            })
+                        }
+                    />
+                </div>
+            ))}
         </div>
     );
 }
