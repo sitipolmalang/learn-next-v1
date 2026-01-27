@@ -43,7 +43,9 @@ export default function PropsEditor({
             </div>
             {Object.entries(schema).map(([key, field]) => (
                 <div key={key}>
-                    <label htmlFor={`input-${key}`} className="block text-sm font-medium mb-1">
+                    <label
+                        htmlFor={`input-${key}`} // 1. Tambahkan atribut htmlFor
+                        className="block text-sm font-medium mb-1">
                         {field.label}
                     </label>
 
