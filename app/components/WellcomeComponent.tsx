@@ -1,4 +1,4 @@
-import ButtonComponent from './ButtonComponent';
+import ButtonComponent from './client/ButtonComponent';
 
 
 export default function WelcomeComponent() {
