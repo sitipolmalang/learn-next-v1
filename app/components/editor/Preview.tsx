@@ -4,6 +4,7 @@ interface PreviewProps {
     label: string;
     color: string;
     href: string;
+    textColor: string;
 }
 
 export default function Preview(props: PreviewProps) {
