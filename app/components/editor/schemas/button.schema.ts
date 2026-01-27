@@ -24,4 +24,4 @@ export const buttonSchema = {
             { value: '#000000', label: 'Black' },
         ],
     },
-} as const;
+} as const; // Gunakan 'as const' untuk membuat schema bersifat readonly
