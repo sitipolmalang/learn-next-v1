@@ -1,5 +1,7 @@
+import { Field } from '../PropsEditor';
+
 // button.schema.ts
-export const buttonSchema = {
+export const buttonSchema: Record<string, Field> = {
     label: {
         type: 'text',
         label: 'Button Text',

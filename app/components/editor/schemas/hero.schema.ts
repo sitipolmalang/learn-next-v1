@@ -1,4 +1,6 @@
-export const heroSchema = {
+import { Field } from '../PropsEditor';
+
+export const heroSchema: Record<string, Field> = {
     heading: {
         type: 'text',
         label: 'Heading',
@@ -19,4 +21,4 @@ export const heroSchema = {
             { value: 'right', label: 'Right' },
         ],
     },
-} as const;
+};

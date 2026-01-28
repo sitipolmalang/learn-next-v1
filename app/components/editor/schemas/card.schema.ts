@@ -1,4 +1,6 @@
-export const cardSchema = {
+import { Field } from '../PropsEditor';
+
+export const cardSchema: Record<string, Field> = {
     title: {
         type: 'text',
         label: 'Title',
