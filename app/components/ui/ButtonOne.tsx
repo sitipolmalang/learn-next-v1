@@ -1,10 +1,11 @@
 
-interface ButtonProps {
+export interface ButtonProps {
     label: string;
     href?: string;
     color?: string;
     textColor?: string;
 }
+
 
 export default function ButtonOne({
     label,
@@ -16,7 +17,7 @@ export default function ButtonOne({
         <a
             href={href}
             target="_blank"
-            className="px-4 py-2 rounded-lg font-semibold inline-block` "
+            className="px-4 py-2 rounded-lg font-semibold inline-block"
             style={{ backgroundColor: color, color: textColor }}
         >
             {label}

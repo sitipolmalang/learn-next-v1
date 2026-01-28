@@ -1,11 +1,14 @@
-import ButtonOne from "../ui/ButtonOne";
+import ButtonOne, { ButtonProps } from "../ui/ButtonOne";
 
-interface PreviewProps {
-    label: string;
-    color: string;
-    href: string;
-    textColor: string;
-}
+// interface PreviewProps {
+//     label: string;
+//     color: string;
+//     href: string;
+//     textColor: string;
+// }
+
+type PreviewProps = ButtonProps; // langsung gunakan ButtonProps dari ButtonOne
+
 
 export default function Preview(props: PreviewProps) {
     return (
