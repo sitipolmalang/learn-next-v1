@@ -1,6 +1,6 @@
 
 export interface ButtonProps {
-    label: string;
+    label?: string;
     href?: string;
     color?: string;
     textColor?: string;
@@ -8,10 +8,10 @@ export interface ButtonProps {
 
 
 export default function ButtonOne({
-    label,
-    href,
-    textColor = '#ffffff',
+    label = 'Click Me',
+    href = 'https://google.com',
     color = '#3b82f6',
+    textColor = '#ffffff',
 }: ButtonProps) {
     return (
         <a

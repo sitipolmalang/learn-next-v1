@@ -2,36 +2,43 @@
 
 import { useState } from 'react';
 import PropsEditor from '../components/editor/PropsEditor';
-import ButtonOne, { ButtonProps } from '../components/ui/ButtonOne';
-import { buttonSchema } from '../components/editor/schemas/button.schema';
+import { schemaMap, ComponentType } from '../components/editor/schemaMap';
+import { rendererMap } from '../components/editor/renderedMap';
 
 export default function EditorPage() {
-    const [buttonProps, setButtonProps] = useState<Partial<ButtonProps>>({
-        label: 'Click Me',
-        color: '#3b82f6',
-        href: 'https://google.com',
-        textColor: '#ffffff',
-    });
+    const [type, setType] = useState<ComponentType>('button');
+    const [props, setProps] = useState<Record<string, string>>({});
+
+    const schema = schemaMap[type];
+    const Component = rendererMap[type];
 
     return (
         <div className="flex h-screen">
-            <aside className="w-1/3 p-6 border-r bg-gray-50 text-gray-700 overflow-y-auto">
-                <h2 className="text-lg font-bold mb-4">Button Props</h2>
+            {/* Sidebar */}
+            <aside className="w-1/3 p-6 border-r space-y-4">
+                <select
+                    value={type}
+                    onChange={(e) => {
+                        setType(e.target.value as ComponentType);
+                        setProps({});
+                    }}
+                    className="w-full border p-2 rounded"
+                >
+                    <option value="button">Button</option>
+                    <option value="card">Card</option>
+                    <option value="hero">Hero</option>
+                </select>
 
                 <PropsEditor
-                    schema={buttonSchema}
-                    value={buttonProps}
-                    onChange={setButtonProps}
+                    schema={schema}
+                    value={props}
+                    onChange={setProps}
                 />
             </aside>
 
+            {/* Preview */}
             <main className="flex-1 flex items-center justify-center bg-gray-100">
-                <div className="p-10 bg-white rounded-xl shadow-sm">
-                    <ButtonOne
-                        {...buttonProps}
-                        label={buttonProps.label ?? 'Click Me'}
-                    />
-                </div>
+                <Component {...props} />
             </main>
         </div>
     );
