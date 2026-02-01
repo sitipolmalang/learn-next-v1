@@ -16,4 +16,14 @@ export const cardSchema: Record<string, Field> = {
         label: 'Background',
         defaultValue: '#ffffff',
     },
+    align: {
+        type: 'select',
+        label: 'Alignment',
+        defaultValue: 'left',
+        options: [
+            { value: 'left', label: 'Left' },
+            { value: 'center', label: 'Center' },
+            { value: 'right', label: 'Right' },
+        ],
+    },
 } as const;

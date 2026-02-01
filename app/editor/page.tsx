@@ -19,6 +19,7 @@ const schemaMap: Record<BlockType, Record<string, Field>> = {
 
 
 export default function EditorPage() {
+    // STATE: blocks di halaman editor sebelah kiri
     const [blocks, setBlocks] = useState<Block[]>([
         {
             id: 'hero',
@@ -35,6 +36,7 @@ export default function EditorPage() {
             props: {
                 title: 'Card Title',
                 description: 'Card description',
+                align: 'left', // New alignment prop
             },
         },
         {
