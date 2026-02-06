@@ -7,6 +7,7 @@ import PropsEditor from '../components/editor/PropsEditor';
 import { heroSchema } from '../components/editor/schemas/hero.schema';
 import { cardSchema } from '../components/editor/schemas/card.schema';
 import { buttonSchema } from '../components/editor/schemas/button.schema';
+import { titleSchema } from '../components/editor/schemas/title.schema';
 import { Block, BlockType } from '../components/PageRendered';
 import { Field } from '../components/editor/PropsEditor';
 
@@ -15,6 +16,7 @@ const schemaMap: Record<BlockType, Record<string, Field>> = {
     hero: heroSchema,
     card: cardSchema,
     button: buttonSchema,
+    title: titleSchema,
 };
 
 
@@ -47,6 +49,16 @@ export default function EditorPage() {
                 href: 'https://google.com',
                 color: '#3b82f6',
                 textColor: '#ffffff',
+            },
+        },
+        {   
+            id: 'title',
+            type: 'title',
+            props: {
+                text: 'Default Title',
+                level: 'h1',
+                color: '#000000',
+                align: 'left',
             },
         },
     ]);
