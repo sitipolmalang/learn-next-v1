@@ -1,5 +1,5 @@
 // types/editor.ts
-export type BlockType = 'hero' | 'card' | 'button' | 'title';
+export type BlockType = 'hero' | 'card' | 'button' | 'title' | 'image';
 
 export interface Block {
     id: string;
@@ -9,10 +9,10 @@ export interface Block {
 }
 
 export type Field = {
-    type: 'text' | 'color' | 'select' | 'number' | 'toggle-group'; 
+    type: 'text' | 'color' | 'select' | 'number' | 'toggle-group';
     label: string;
     defaultValue: string;
-    options?: { value: string; label: string; icon?: React.ReactNode }[]; 
+    options?: { value: string; label: string; icon?: React.ReactNode }[];
 };
 
 export type Schema = Record<string, Field>;

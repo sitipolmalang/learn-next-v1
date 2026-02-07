@@ -7,6 +7,7 @@ import { heroSchema } from '../components/editor/schemas/hero.schema';
 import { cardSchema } from '../components/editor/schemas/card.schema';
 import { buttonSchema } from '../components/editor/schemas/button.schema';
 import { titleSchema } from '../components/editor/schemas/title.schema';
+import { imageSchema } from '../components/editor/schemas/image.schema';
 import { Field } from '../components/editor/types/editor';
 
 import EditorSidebar from '../components/editor/EditorSidebar';
@@ -19,6 +20,7 @@ const schemaMap: Record<BlockType, Record<string, Field>> = {
     card: cardSchema,
     button: buttonSchema,
     title: titleSchema,
+    image: imageSchema,
 };
 
 export default function EditorPage() {
@@ -27,6 +29,7 @@ export default function EditorPage() {
         { id: 'card', type: 'card', props: { title: 'Card Title', description: 'Card description', align: 'left' } },
         { id: 'button', type: 'button', props: { label: 'Click Me', color: '#3b82f6', textColor: '#ffffff' } },
         { id: 'title', type: 'title', props: { text: 'Booking Section', level: 'h1', color: '#000000', align: 'left' } },
+        { id: 'image', type: 'image', props: { src: 'https://placehold.co/600x400', alt: 'Placeholder', align: 'center' } },
     ]);
 
     const [openId, setOpenId] = useState<string | null>('hero');

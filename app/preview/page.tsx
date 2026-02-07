@@ -7,12 +7,14 @@ import { heroSchema } from '../components/editor/schemas/hero.schema';
 import { cardSchema } from '../components/editor/schemas/card.schema';
 import { buttonSchema } from '../components/editor/schemas/button.schema';
 import { titleSchema } from '../components/editor/schemas/title.schema';
+import { imageSchema } from '../components/editor/schemas/image.schema';
 
 const schemaMap = {
     hero: heroSchema,
     card: cardSchema,
     button: buttonSchema,
     title: titleSchema,
+    image: imageSchema,
 };
 
 export default function PreviewPage() {
