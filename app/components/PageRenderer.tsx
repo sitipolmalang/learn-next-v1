@@ -2,15 +2,18 @@ import { componentRegistry } from './registry';
 import { validateProps } from './editor/validateProps';
 import { Field } from './editor/types/editor';
 import { BlockType } from './editor/types/editor';
+import { Block } from './editor/types/editor';
+// import { Block, BlockType } from './editor/types/editor';
+// import { Field } from './editor/types/editor';
 
 // type BlockType = 'hero' | 'card' | 'button' | 'title' | 'image' | 'featureGrid' | 'testimonialGrid' | 'footer';
 
-type Block = {
-    id: string;
-    type: BlockType;
-    props: Record<string, string>;
-    hidden?: boolean;
-};
+// type Block = {
+//     id: string;
+//     type: BlockType;
+//     props: Record<string, string>;
+//     hidden?: boolean;
+// };
 
 export default function PageRenderer({
     blocks,
@@ -27,6 +30,14 @@ export default function PageRenderer({
                 const Component = componentRegistry[block.type];
                 const schema = schemaMap[block.type];
 
+                // if (!Component || !schema) return null; // Safety check for missing components or schemas 
+                
+                if (!Component || !schema) {
+                    console.warn(`Invalid block type: ${block.type}`);
+                    return null;
+                } // for DEBUGGING PURPOSES
+
+
                 const safeProps = validateProps(schema, block.props);
 
                 return (
@@ -34,7 +45,9 @@ export default function PageRenderer({
                         key={block.id}
                         {...safeProps}
                     />
+
                 );
+
             })}
         </div>
     );

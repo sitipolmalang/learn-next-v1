@@ -43,8 +43,8 @@ export default function TemplateSelector({ isOpen, onClose, onSelect }: Template
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {/* Empty Template Option */}
                         <div
-                            onClick={() => onSelect({ id: 'blank', name: 'Blank Canvas', description: 'Start from scratch', thumbnail: 'bg-white', blocks: [] })}
-                            className="group cursor-pointer bg-white rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-500 hover:shadow-lg transition-all p-6 flex flex-col items-center justify-center min-h-[200px]"
+                            onClick={() => onSelect({ id: 'blank', name: 'Blank Canvas', description: 'Start from scratch', category: 'custom', thumbnail: 'bg-white', blocks: [] })}
+                            className="group cursor-pointer bg-white rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-500 hover:shadow-lg transition-all p-6 flex flex-col items-center justify-center min-h-50"
                         >
                             <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                                 <PlusIcon className="w-8 h-8 text-gray-400 group-hover:text-blue-600" />
