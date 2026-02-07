@@ -26,7 +26,7 @@ export default function ResetModal({ isOpen, onClose, onConfirm }: ResetModalPro
 
                     <h3 className="text-lg font-bold text-gray-900">Reset Section?</h3>
                     <p className="mt-2 text-sm text-gray-500">
-                        Semua perubahan akan dihapus dan dikembalikan ke pengaturan awal.
+                        All changes will be lost and reset to the default settings.
                     </p>
                 </div>
 
