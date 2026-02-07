@@ -26,4 +26,38 @@ export const cardSchema: Record<string, Field> = {
             { value: 'right', label: 'Right' },
         ],
     },
+    shadow: {
+        type: 'select',
+        label: 'Shadow',
+        defaultValue: 'md',
+        options: [
+            { value: 'none', label: 'None' },
+            { value: 'sm', label: 'Small' },
+            { value: 'md', label: 'Medium' },
+            { value: 'lg', label: 'Large' },
+            { value: 'xl', label: 'Extra Large' },
+        ],
+    },
+    borderRadius: {
+        type: 'select',
+        label: 'Corner Radius',
+        defaultValue: 'lg',
+        options: [
+            { value: 'none', label: 'None' },
+            { value: 'sm', label: 'Small' },
+            { value: 'md', label: 'Medium' },
+            { value: 'lg', label: 'Large' },
+            { value: 'xl', label: 'Extra Large' },
+            { value: 'full', label: 'Full' },
+        ],
+    },
+    hoverEffect: {
+        type: 'select', // Using select as boolean toggle for now (or convert to toggle-group if supported)
+        label: 'Hover Effect',
+        defaultValue: 'true',
+        options: [
+            { value: 'true', label: 'On' },
+            { value: 'false', label: 'Off' },
+        ],
+    },
 } as const;

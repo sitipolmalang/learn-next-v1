@@ -21,4 +21,25 @@ export const heroSchema: Record<string, Field> = {
             { value: 'right', label: 'Right' },
         ],
     },
+    backgroundColor: {
+        type: 'color',
+        label: 'Background Color',
+        defaultValue: '#ffffff',
+    },
+    textColor: {
+        type: 'color',
+        label: 'Text Color',
+        defaultValue: '#1f2937',
+    },
+    padding: {
+        type: 'select',
+        label: 'Padding Size',
+        defaultValue: 'lg',
+        options: [
+            { value: 'sm', label: 'Small' },
+            { value: 'md', label: 'Medium' },
+            { value: 'lg', label: 'Large' },
+            { value: 'xl', label: 'Extra Large' },
+        ],
+    },
 };
