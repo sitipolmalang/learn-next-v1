@@ -1,8 +1,9 @@
 import { componentRegistry } from './registry';
 import { validateProps } from './editor/validateProps';
 import { Field } from './editor/types/editor';
+import { BlockType } from './editor/types/editor';
 
-type BlockType = 'hero' | 'card' | 'button' | 'title' | 'image' | 'featureGrid' | 'testimonialGrid' | 'footer';
+// type BlockType = 'hero' | 'card' | 'button' | 'title' | 'image' | 'featureGrid' | 'testimonialGrid' | 'footer';
 
 type Block = {
     id: string;
