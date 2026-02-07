@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Block, BlockType } from '../components/PageRenderer';
 
 import { heroSchema } from '../components/editor/schemas/hero.schema';
@@ -15,6 +16,10 @@ import EditorToolbar from '../components/editor/EditorToolbar';
 import EditorCanvas from '../components/editor/EditorCanvas';
 import ResetModal from '../components/editor/ResetModal';
 
+import TemplateSelector from '../components/templates/TemplateSelector';
+import { Template } from '../components/templates/types';
+import { defaultTemplates } from '../components/templates/defaults';
+
 const schemaMap: Record<BlockType, Record<string, Field>> = {
     hero: heroSchema,
     card: cardSchema,
@@ -23,13 +28,9 @@ const schemaMap: Record<BlockType, Record<string, Field>> = {
     image: imageSchema,
 };
 
-export default function EditorPage() {
+function EditorPageContent() {
     const [blocks, setBlocks] = useState<Block[]>([
-        { id: 'hero', type: 'hero', props: { heading: 'Hero Title', subheading: 'Hero subtitle text', align: 'center' } },
-        { id: 'card', type: 'card', props: { title: 'Card Title', description: 'Card description', align: 'left' } },
-        { id: 'button', type: 'button', props: { label: 'Click Me', color: '#3b82f6', textColor: '#ffffff' } },
-        { id: 'title', type: 'title', props: { text: 'Booking Section', level: 'h1', color: '#000000', align: 'left' } },
-        { id: 'image', type: 'image', props: { src: 'https://placehold.co/600x400', alt: 'Placeholder', align: 'center' } },
+        { id: 'hero', type: 'hero', props: { heading: 'Start with a Template', subheading: 'Click "Change Template" above to choose a layout.', align: 'center' } },
     ]);
 
     const [openId, setOpenId] = useState<string | null>('hero');
@@ -95,18 +96,55 @@ export default function EditorPage() {
         }
     };
 
+    // 3. Template System State
+    const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+
+    // Logic untuk memuat template dari URL query param (misal: /editor?templateId=landing)
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const templateId = searchParams.get('templateId');
+        if (templateId) {
+            const template = defaultTemplates.find(t => t.id === templateId);
+            if (template) {
+                // Load template blocks
+                const newBlocks = template.blocks.map(block => ({
+                    ...block,
+                    props: { ...block.props }
+                }));
+                setBlocks(newBlocks);
+
+                // Clear URL param without reload (cleaner URL)
+                window.history.replaceState(null, '', '/editor');
+            }
+        }
+    }, [searchParams]);
+
+    const handleLoadTemplate = (template: Template) => {
+        // Deep copy untuk menghindari mutasi reference
+        const newBlocks = template.blocks.map(block => ({
+            ...block,
+            props: { ...block.props }
+        }));
+
+        setBlocks(newBlocks);
+        setShowTemplateSelector(false);
+    };
+
     return (
         <div className="flex h-screen bg-white overflow-hidden">
             {/* --- SIDEBAR --- */}
-            <EditorSidebar
-                blocks={blocks}
-                openId={openId}
-                setOpenId={setOpenId}
-                toggleVisibility={toggleVisibility}
-                triggerReset={triggerReset}
-                handleUpdateProps={handleUpdateProps}
-                schemaMap={schemaMap}
-            />
+            <div className="flex">
+                <EditorSidebar
+                    blocks={blocks}
+                    openId={openId}
+                    setOpenId={setOpenId}
+                    toggleVisibility={toggleVisibility}
+                    triggerReset={triggerReset}
+                    handleUpdateProps={handleUpdateProps}
+                    schemaMap={schemaMap}
+                />
+            </div>
 
             {/* --- MAIN AREA --- */}
             <main className="flex-1 flex flex-col bg-[#f3f4f6]">
@@ -118,6 +156,7 @@ export default function EditorPage() {
                     zoom={zoom}
                     setZoom={setZoom}
                     handleOpenLivePreview={handleOpenLivePreview}
+                    onOpenTemplateSelector={() => setShowTemplateSelector(true)}
                 />
 
                 {/* CANVAS AREA */}
@@ -135,6 +174,21 @@ export default function EditorPage() {
                 onClose={() => setResetModal({ isOpen: false, blockId: null })}
                 onConfirm={confirmReset}
             />
+
+            {/* TEMPLATE SELECTOR MODAL */}
+            <TemplateSelector
+                isOpen={showTemplateSelector}
+                onClose={() => setShowTemplateSelector(false)}
+                onSelect={handleLoadTemplate}
+            />
         </div>
+    );
+}
+
+export default function EditorPage() {
+    return (
+        <Suspense fallback={<div>Loading Editor...</div>}>
+            <EditorPageContent />
+        </Suspense>
     );
 }

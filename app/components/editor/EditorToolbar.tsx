@@ -1,4 +1,4 @@
-import { ExternalLink, Maximize, Minus, Monitor, Plus, Smartphone, Tablet } from 'lucide-react';
+import { ExternalLink, Maximize, Minus, Monitor, Plus, Smartphone, Tablet, LayoutTemplate } from 'lucide-react';
 
 interface EditorToolbarProps {
     viewMode: 'mobile' | 'tablet' | 'desktop';
@@ -6,6 +6,7 @@ interface EditorToolbarProps {
     zoom: number;
     setZoom: React.Dispatch<React.SetStateAction<number>>;
     handleOpenLivePreview: () => void;
+    onOpenTemplateSelector: () => void;
 }
 
 export default function EditorToolbar({
@@ -13,21 +14,30 @@ export default function EditorToolbar({
     setViewMode,
     zoom,
     setZoom,
-    handleOpenLivePreview
+    handleOpenLivePreview,
+    onOpenTemplateSelector
 }: EditorToolbarProps) {
     return (
         <div className="h-16 bg-white flex items-center justify-between px-6 shadow-sm z-10">
-            {/* Sisi Kiri: Kosong/Logo */}
-            <div className="w-1/4">
+            {/* Sisi Kiri: Preview & Template */}
+            <div className="w-1/4 flex items-center gap-2">
                 <button
                     onClick={handleOpenLivePreview}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-bold hover:bg-blue-100 transition-colors"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-bold hover:bg-blue-100 transition-colors border border-blue-100"
                     title="Live Preview"
                 >
                     <ExternalLink size={14} />
-                    LIVE PREVIEW
+                    <span>PREVIEW</span>
                 </button>
 
+                <button
+                    onClick={onOpenTemplateSelector}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-md text-xs font-bold hover:bg-gray-100 transition-colors border border-gray-200"
+                    title="Change Template"
+                >
+                    <LayoutTemplate size={14} />
+                    <span>TEMPLATE</span>
+                </button>
             </div>
 
             {/* Tengah: Device Switcher */}
