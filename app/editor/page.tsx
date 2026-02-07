@@ -14,7 +14,7 @@ import { heroSchema } from '../components/editor/schemas/hero.schema';
 import { cardSchema } from '../components/editor/schemas/card.schema';
 import { buttonSchema } from '../components/editor/schemas/button.schema';
 import { titleSchema } from '../components/editor/schemas/title.schema';
-import { Field } from '../components/editor/PropsEditor';
+import { Field } from '../components/editor/types/editor';
 
 const schemaMap: Record<BlockType, Record<string, Field>> = {
     hero: heroSchema,
@@ -37,8 +37,8 @@ export default function EditorPage() {
     const [zoom, setZoom] = useState(1); // Default 85% agar pas di layar saat awal
 
     // FIX: Tipe data untuk menghindari 'any'
-    const handleUpdateProps = (id: string, newProps: Record<string, string>) => {
-        setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, props: newProps } : b)));
+    const handleUpdateProps = (id: string, newProps: Record<string, string | number | boolean>) => {
+        setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, props: newProps as Record<string, string> } : b)));
     };
 
     // Helper untuk menentukan lebar canvas preview
@@ -73,7 +73,7 @@ export default function EditorPage() {
         if (!block) return;
 
         const schema = schemaMap[block.type];
-        const defaultProps: Record<string, string> = {};
+        const defaultProps: Record<string, string | number | boolean> = {};
 
         // Ambil default value dari schema masing-masing field
         Object.entries(schema).forEach(([key, field]) => {

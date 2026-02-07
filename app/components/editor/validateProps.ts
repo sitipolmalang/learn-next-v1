@@ -1,10 +1,10 @@
-import { Field } from './PropsEditor';
+import { Field } from './types/editor';
 
 export function validateProps(
     schema: Record<string, Field>,
     props: Record<string, string>
-): Record<string, string> {
-    const result: Record<string, string> = {};
+): Record<string, string | number | boolean> {
+    const result: Record<string, string | number | boolean> = {};
 
     for (const key in schema) {
         const field = schema[key];

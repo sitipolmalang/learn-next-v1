@@ -1,6 +1,6 @@
 import { componentRegistry } from './registry';
 import { validateProps } from './editor/validateProps';
-import { Field } from './editor/PropsEditor';
+import { Field } from './editor/types/editor';
 
 type BlockType = 'hero' | 'card' | 'button' | 'title';
 
@@ -21,7 +21,7 @@ export default function PageRenderer({
     return (
         <div className="space-y-8">
             {blocks.map((block) => {
-                if (block.hidden) return null;
+                
 
                 const Component = componentRegistry[block.type];
                 const schema = schemaMap[block.type];

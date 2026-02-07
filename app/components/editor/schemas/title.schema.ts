@@ -1,4 +1,4 @@
-import { Field } from '../PropsEditor';
+import { Field } from '../types/editor';
 
 export const titleSchema: Record<string, Field> = {
     text: {

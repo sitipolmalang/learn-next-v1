@@ -1,4 +1,4 @@
-import { Field } from '../PropsEditor';
+import { Field } from '../types/editor';
 
 // button.schema.ts
 export const buttonSchema: Record<string, Field> = {

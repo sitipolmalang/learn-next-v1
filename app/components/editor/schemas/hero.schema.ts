@@ -1,4 +1,4 @@
-import { Field } from '../PropsEditor';
+import { Field } from '../types/editor';
 
 export const heroSchema: Record<string, Field> = {
     heading: {
