@@ -296,7 +296,7 @@ export default function EditorPage() {
 
                             <h3 className="text-lg font-bold text-gray-900">Reset Section?</h3>
                             <p className="mt-2 text-sm text-gray-500">
-                                Semua pengaturan pada section ini akan dikembalikan ke setelan awal. Tindakan ini tidak dapat dibatalkan.
+                                Semua perubahan akan dihapus dan dikembalikan ke pengaturan awal.
                             </p>
                         </div>
 
