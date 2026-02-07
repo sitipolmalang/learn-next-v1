@@ -35,13 +35,13 @@ export default function ResetModal({ isOpen, onClose, onConfirm }: ResetModalPro
                         onClick={onClose}
                         className="flex-1 px-4 py-4 text-sm font-semibold text-gray-500 hover:bg-gray-50 transition-colors border-r border-gray-100"
                     >
-                        Batal
+                        Cancel
                     </button>
                     <button
                         onClick={onConfirm}
                         className="flex-1 px-4 py-4 text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors"
                     >
-                        Ya, Reset
+                        Yes, Reset
                     </button>
                 </div>
             </div>
