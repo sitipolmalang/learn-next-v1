@@ -206,7 +206,7 @@ export default function EditorPage() {
                             <Tablet size={18} />
                         </button>
                         <button
-                            onClick={() => { setViewMode('desktop'); setZoom(1); }}
+                            onClick={() => { setViewMode('desktop'); setZoom(0.85); }}
                             className={`p-1.5 rounded-md transition-all ${viewMode === 'desktop' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`}
                             title="Desktop View"
                         >
