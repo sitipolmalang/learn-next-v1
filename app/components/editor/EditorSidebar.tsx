@@ -22,7 +22,7 @@ export default function EditorSidebar({
     schemaMap
 }: EditorSidebarProps) {
     return (
-        <aside className="w-87.5 border-r flex flex-col bg-white z-20">
+        <aside className="w-80 border-r flex flex-col bg-white z-20">
             <div className="p-4 mb-2">
                 <h1 className="font-bold text-gray-900 text-center">Page Editor</h1>
                 <p className="text-xs text-gray-500 text-center">Customize your sections</p>

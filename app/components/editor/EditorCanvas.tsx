@@ -18,7 +18,7 @@ export default function EditorCanvas({
     const getViewWidth = () => {
         if (viewMode === 'mobile') return 'w-[375px]';
         if (viewMode === 'tablet') return 'w-[768px]';
-        return 'w-[1100px]'; // Kita set lebar desktop tetap agar zoom terasa gunanya
+        return 'w-[900px]'; // Kita set lebar desktop tetap agar zoom terasa gunanya
     };
 
     return (
