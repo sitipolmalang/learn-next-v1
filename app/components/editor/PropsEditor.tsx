@@ -17,25 +17,25 @@ export default function PropsEditor({
     onChange: (v: Record<string, string>) => void;
 }) {
 
-    const handleReset = () => {
-        const defaults: Record<string, string> = {};
-        Object.entries(schema).forEach(([key, field]) => {
-            defaults[key] = field.defaultValue;
-        });
-        onChange(defaults);
-    };
+    // const handleReset = () => {
+    //     const defaults: Record<string, string> = {};
+    //     Object.entries(schema).forEach(([key, field]) => {
+    //         defaults[key] = field.defaultValue;
+    //     });
+    //     onChange(defaults);
+    // };
 
     return (
         <div className="space-y-4">
             {/* HEADER + RESET */}
             <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-700">Settings</h3>
-                <button
+                <h3 className="font-semibold text-gray-700">Component Settings</h3>
+                {/* <button
                     onClick={handleReset}
                     className="text-xs text-red-500 hover:text-red-700 font-medium"
                 >
                     Reset
-                </button>
+                </button> */}
             </div>
 
             {Object.entries(schema).map(([key, field]) => (

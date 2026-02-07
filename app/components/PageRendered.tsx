@@ -8,6 +8,7 @@ type Block = {
     id: string;
     type: BlockType;
     props: Record<string, string>;
+    hidden?: boolean;
 };
 
 export default function PageRenderer({
@@ -20,6 +21,8 @@ export default function PageRenderer({
     return (
         <div className="space-y-8">
             {blocks.map((block) => {
+                if (block.hidden) return null;
+
                 const Component = componentRegistry[block.type];
                 const schema = schemaMap[block.type];
 
