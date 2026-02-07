@@ -7,7 +7,7 @@ import {
     ExternalLink, EyeOff,
     Plus, Minus // Icon tambahan untuk zoom
 } from 'lucide-react';
-import PageRenderer, { Block, BlockType } from '../components/PageRendered';
+import PageRenderer, { Block, BlockType } from '../components/PageRenderer';
 import PropsEditor from '../components/editor/PropsEditor';
 
 import { heroSchema } from '../components/editor/schemas/hero.schema';

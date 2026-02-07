@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import PageRenderer, { Block } from '../components/PageRendered';
+import PageRenderer, { Block } from '../components/PageRenderer';
 import { heroSchema } from '../components/editor/schemas/hero.schema';
 import { cardSchema } from '../components/editor/schemas/card.schema';
 import { buttonSchema } from '../components/editor/schemas/button.schema';
