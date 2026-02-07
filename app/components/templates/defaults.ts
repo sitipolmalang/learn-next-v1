@@ -44,5 +44,20 @@ export const defaultTemplates: Template[] = [
             { id: 'title-contact', type: 'title', props: { text: 'Contact Us', level: 'h2', align: 'left', color: '#1f2937' } },
             { id: 'btn-contact', type: 'button', props: { label: 'Schedule a Call', color: '#3b82f6', textColor: '#ffffff', variant: 'outline', size: 'md', borderRadius: 'sm' } },
         ]
+    },
+    {
+        id: 'dimsum-joss',
+        name: 'Dimsum Joss',
+        description: 'Authentic red and gold themed template perfect for food businesses.',
+        thumbnail: 'bg-red-100',
+        blocks: [
+            { id: 'hero', type: 'hero', props: { heading: 'Dimsum Paling Enak di Indonesia', subheading: 'Paling Laris, Enak, Murah, Halal dan no 1 di Indonesia.', align: 'center', backgroundColor: '#991b1b', textColor: '#ffffff', padding: 'xl', overlayOpacity: '30', backgroundImage: 'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&q=80&w=2070' } },
+            { id: 'btn-cta', type: 'button', props: { label: 'Pesan Sekarang', color: '#ffffff', textColor: '#b91c1c', variant: 'solid', size: 'lg', borderRadius: 'full' } },
+            { id: 'features', type: 'featureGrid', props: { title: 'Kenapa Dimsum Joss?', subtitle: 'Dedikasi Rasa Sejak Tahun 2015', backgroundColor: '#fff7ed', textColor: '#7c2d12', f1Title: 'Berpengalaman', f1Desc: 'Lebih dari 8 tahun melayani.', f1Icon: 'star', f2Title: 'Bahan Pilihan', f2Desc: 'Daging segar dan rempah terbaik.', f2Icon: 'box', f3Title: '100% Halal', f3Desc: 'Tersertifikasi Halal MUI & BPOM.', f3Icon: 'shield', f4Title: 'Komunitas', f4Desc: '1000+ mitra UMKM berkembang.', f4Icon: 'users' } },
+            { id: 'gallery-title', type: 'title', props: { text: 'Menu Favorit', level: 'h2', align: 'center', color: '#991b1b' } },
+            { id: 'image-menu-1', type: 'image', props: { src: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&q=80&w=800', alt: 'Dimsum Platter', align: 'center' } },
+            { id: 'testimonials', type: 'testimonialGrid', props: { title: 'Apa Kata Mereka?', backgroundColor: '#ffffff', textColor: '#1f2937', t1Name: 'Siska Amelia', t1Role: 'Ibu Rumah Tangga', t1Quote: 'Rasanya bikin nagih! Anak-anak suka banget.', t2Name: 'Hendra Setiawan', t2Role: 'Owner Cafe', t2Quote: 'Partner bisnis terbaik, supply lancar.', t3Name: 'Aditya', t3Role: 'Mahasiswa', t3Quote: 'Murah tapi rasanya premium banget.' } },
+            { id: 'footer', type: 'footer', props: { companyName: 'Dimsum Joss', description: 'Menghadirkan kelezatan dimsum bintang lima dengan harga kaki lima.', styles: 'dark', backgroundColor: '#7f1d1d', textColor: '#ffffff' } },
+        ]
     }
 ];

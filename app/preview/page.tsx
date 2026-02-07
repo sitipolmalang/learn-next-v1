@@ -8,6 +8,9 @@ import { cardSchema } from '../components/editor/schemas/card.schema';
 import { buttonSchema } from '../components/editor/schemas/button.schema';
 import { titleSchema } from '../components/editor/schemas/title.schema';
 import { imageSchema } from '../components/editor/schemas/image.schema';
+import { featureGridSchema } from '../components/editor/schemas/featureGrid.schema';
+import { testimonialGridSchema } from '../components/editor/schemas/testimonialGrid.schema';
+import { footerSchema } from '../components/editor/schemas/footer.schema';
 
 const schemaMap = {
     hero: heroSchema,
@@ -15,6 +18,9 @@ const schemaMap = {
     button: buttonSchema,
     title: titleSchema,
     image: imageSchema,
+    featureGrid: featureGridSchema,
+    testimonialGrid: testimonialGridSchema,
+    footer: footerSchema,
 };
 
 export default function PreviewPage() {

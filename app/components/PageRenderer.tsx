@@ -2,7 +2,7 @@ import { componentRegistry } from './registry';
 import { validateProps } from './editor/validateProps';
 import { Field } from './editor/types/editor';
 
-type BlockType = 'hero' | 'card' | 'button' | 'title' | 'image';
+type BlockType = 'hero' | 'card' | 'button' | 'title' | 'image' | 'featureGrid' | 'testimonialGrid' | 'footer';
 
 type Block = {
     id: string;

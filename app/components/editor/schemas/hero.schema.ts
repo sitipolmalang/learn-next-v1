@@ -26,6 +26,24 @@ export const heroSchema: Record<string, Field> = {
         label: 'Background Color',
         defaultValue: '#ffffff',
     },
+    backgroundImage: {
+        type: 'text',
+        label: 'Background Image URL',
+        defaultValue: '',
+    },
+    overlayOpacity: {
+        type: 'select',
+        label: 'Overlay Opacity (%)',
+        defaultValue: '50',
+        options: [
+            { value: '0', label: '0%' },
+            { value: '10', label: '10%' },
+            { value: '30', label: '30%' },
+            { value: '50', label: '50%' },
+            { value: '70', label: '70%' },
+            { value: '90', label: '90%' },
+        ],
+    },
     textColor: {
         type: 'color',
         label: 'Text Color',

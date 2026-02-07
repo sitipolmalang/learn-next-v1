@@ -1,5 +1,5 @@
 // types/editor.ts
-export type BlockType = 'hero' | 'card' | 'button' | 'title' | 'image';
+export type BlockType = 'hero' | 'card' | 'button' | 'title' | 'image' | 'featureGrid' | 'testimonialGrid' | 'footer';
 
 export interface Block {
     id: string;
