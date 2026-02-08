@@ -86,10 +86,8 @@ export default function TemplatesPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {/* Blank Canvas Option */}
-                    <div
-                        onClick={() => router.push('/edit')}
-                        className="group cursor-pointer bg-white rounded-2xl border-2 border-dashed border-gray-300 hover:border-blue-500 hover:shadow-xl transition-all p-8 flex flex-col items-center justify-center min-h-75"
-                    >
+                    <div onClick={() => router.push('/edit')}
+                    className="group cursor-pointer bg-white rounded-2xl border-2 border-dashed border-gray-300 hover:border-blue-500 hover:shadow-xl transition-all p-8 flex flex-col items-center justify-center min-h-75">
                         <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mb-6 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -107,9 +105,7 @@ export default function TemplatesPage() {
                             className="group cursor-pointer bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-2xl hover:border-blue-500/50 transition-all transform hover:-translate-y-1"
                         >
                             {/* Thumbnail */}
-                            <div
-                                className={`h-48 ${template.thumbnail} relative overflow-hidden flex items-center justify-center`}
-                            >
+                            <div className={`h-48 ${template.thumbnail} relative overflow-hidden flex items-center justify-center`}>
                                 <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
 
                                 <div className="w-3/4 h-3/4 bg-white shadow-lg rounded-lg p-3 opacity-60 scale-95 group-hover:scale-100 transition-transform duration-300">
