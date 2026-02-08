@@ -1,4 +1,4 @@
-import { Block } from '../PageRenderer';
+import { Block } from '../editor/types/editor';
 
 export interface Template {
     id: string;
