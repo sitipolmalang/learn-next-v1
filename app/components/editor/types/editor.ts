@@ -15,5 +15,5 @@ export type Field = {
     options?: { value: string; label: string; icon?: React.ReactNode }[];
 };
 
-export type Schema = Record<string, Field>;
-export type SchemaMap = Record<BlockType, Schema>;
+// export type Schema = Record<string, Field>;
+// export type SchemaMap = Record<BlockType, Schema>;

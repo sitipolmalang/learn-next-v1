@@ -14,7 +14,7 @@ export default function TemplatesPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 font-[family-name:var(--font-geist-sans)]">
+        <div className="min-h-screen bg-gray-50 font-(family-name:--font-geist-sans)">
             {/* Header */}
             <header className="bg-white border-b sticky top-0 z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -39,7 +39,7 @@ export default function TemplatesPage() {
                     {/* Blank Canvas Option */}
                     <div
                         onClick={() => router.push('/editor')}
-                        className="group cursor-pointer bg-white rounded-2xl border-2 border-dashed border-gray-300 hover:border-blue-500 hover:shadow-xl transition-all p-8 flex flex-col items-center justify-center min-h-[300px]"
+                        className="group cursor-pointer bg-white rounded-2xl border-2 border-dashed border-gray-300 hover:border-blue-500 hover:shadow-xl transition-all p-8 flex flex-col items-center justify-center min-h-75"
                     >
                         <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mb-6 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -76,7 +76,7 @@ export default function TemplatesPage() {
                                 </div>
 
                                 {/* Hover Button */}
-                                <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/50 to-transparent flex justify-center">
+                                <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-linear-to-t from-black/50 to-transparent flex justify-center">
                                     <span className="px-4 py-2 bg-white text-gray-900 font-bold rounded-full text-sm shadow-lg flex items-center gap-2">
                                         Use Template <ArrowRight size={14} />
                                     </span>
