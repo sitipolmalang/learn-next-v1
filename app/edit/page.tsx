@@ -95,7 +95,7 @@ function EditorPageContent() {
     // Bersihkan URL tanpa trigger re-render blocks
     useEffect(() => {
         if (templateId) {
-            window.history.replaceState(null, '', '/editor');
+            window.history.replaceState(null, '', '/edit');
         }
     }, [templateId]);
 
@@ -149,7 +149,7 @@ function EditorPageContent() {
 
 export default function EditorPage() {
     return (
-        <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading Editor...</div>}>
+        <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading Edit Page...</div>}>
             <EditorPageContent />
         </Suspense>
     );

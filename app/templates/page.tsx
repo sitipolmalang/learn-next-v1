@@ -34,6 +34,7 @@ export default function TemplatesPage() {
         router.push(`/edit?templateId=${templateId}`);
     };
 
+    // Fungsi untuk membuka preview di tab baru, HARUS DIGANTI
     const handleOpenLivePreview = (templateId: string) => {
         const url = `/preview?templateId=${templateId}`
         window.open(url, "_blank", "noopener,noreferrer")
