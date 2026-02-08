@@ -5,7 +5,7 @@ export const defaultTemplates: Template[] = [
         id: 'portfolio',
         name: 'Portfolio',
         description: 'Showcase your work with a clean and professional portfolio layout.',
-        category: 'Portfolio',
+        category: 'services',
         thumbnail: 'bg-blue-100', // Placeholder color
         blocks: [
             { id: 'hero', type: 'hero', props: { heading: 'My Creative Portfolio', subheading: 'Designing experiences that matter.', align: 'center', backgroundColor: '#eff6ff', textColor: '#1e3a8a', padding: 'xl' } },
@@ -20,7 +20,7 @@ export const defaultTemplates: Template[] = [
         id: 'landing',
         name: 'Landing Page',
         description: 'A high-converting landing page for your product or service.',
-        category: 'Landing Page',
+        category: 'landing-page',
         thumbnail: 'bg-green-100',
         blocks: [
             { id: 'hero', type: 'hero', props: { heading: 'The Ultimate Solution', subheading: 'Boost your productivity by 200% today.', align: 'center', backgroundColor: '#ffffff', textColor: '#111827', padding: 'xl' } },
@@ -36,7 +36,7 @@ export const defaultTemplates: Template[] = [
         id: 'business',
         name: 'Business',
         description: 'Professional layout for corporate or small business websites.',
-        category: 'Business',
+        category: 'business',
         thumbnail: 'bg-gray-100',
         blocks: [
             { id: 'hero', type: 'hero', props: { heading: 'Acme Corp', subheading: 'Building the future of industry.', align: 'left', backgroundColor: '#1f2937', textColor: '#ffffff', padding: 'xl' } },
@@ -52,7 +52,7 @@ export const defaultTemplates: Template[] = [
         id: 'dimsum-joss',
         name: 'Dimsum Joss',
         description: 'Authentic red and gold themed template perfect for food businesses.',
-        category: 'Business',
+        category: 'e-commerce',
         thumbnail: 'bg-red-100',
         blocks: [
             { id: 'hero', type: 'hero', props: { heading: 'Dimsum Paling Enak di Indonesia', subheading: 'Paling Laris, Enak, Murah, Halal dan no 1 di Indonesia.', align: 'center', backgroundColor: '#991b1b', textColor: '#ffffff', padding: 'xl', overlayOpacity: '30', backgroundImage: 'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&q=80&w=2070' } },

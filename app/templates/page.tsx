@@ -4,13 +4,34 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LayoutTemplate, ArrowRight } from 'lucide-react';
 import { defaultTemplates } from '../components/templates/defaults';
+import { Template, TemplateCategory, TEMPLATE_CATEGORIES, } from '../components/templates/types';
+import { useMemo, useState } from 'react';
 
 export default function TemplatesPage() {
     const router = useRouter();
 
+    // 🔥 FILTER LOGIC (DIPAKAI)
+    const [activeCategory, setActiveCategory] =
+        useState<TemplateCategory>('all');
+    const [search, setSearch] = useState('');
+
+    const filteredTemplates = useMemo(() => {
+        return defaultTemplates.filter((template: Template) => {
+            const matchCategory =
+                activeCategory === 'all' ||
+                template.category === activeCategory;
+
+            const matchSearch =
+                template.name.toLowerCase().includes(search.toLowerCase()) ||
+                template.description.toLowerCase().includes(search.toLowerCase());
+
+            return matchCategory && matchSearch;
+        });
+    }, [activeCategory, search]);
+
     const handleSelectTemplate = (templateId: string) => {
         // Redirect to editor with templateId param
-        router.push(`/editor?templateId=${templateId}`);
+        router.push(`/edit?templateId=${templateId}`);
     };
 
     return (
@@ -35,10 +56,38 @@ export default function TemplatesPage() {
                     </p>
                 </div>
 
+                {/* Search + Category */}
+                <div className="max-w-3xl mx-auto mb-12 space-y-5">
+                    {/* Search */}
+                    <input
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        placeholder="Cari template, industri..."
+                        className="w-full px-5 py-3 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500"
+                    />
+
+                    {/* Category Pills */}
+                    <div className="w-full">
+                        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 flex-nowrap'>
+                            {TEMPLATE_CATEGORIES.map(cat => (
+                                <button key={cat.key}
+                                    onClick={() => setActiveCategory(cat.key)}
+                                    className={`px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${activeCategory === cat.key
+                                        ? 'bg-slate-900 text-white'
+                                        : 'bg-white text-slate-600 border hover:bg-slate-50'
+                                        }`}
+                                >
+                                    {cat.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {/* Blank Canvas Option */}
                     <div
-                        onClick={() => router.push('/editor')}
+                        onClick={() => router.push('/edit')}
                         className="group cursor-pointer bg-white rounded-2xl border-2 border-dashed border-gray-300 hover:border-blue-500 hover:shadow-xl transition-all p-8 flex flex-col items-center justify-center min-h-75"
                     >
                         <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mb-6 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
@@ -51,17 +100,18 @@ export default function TemplatesPage() {
                         <p className="text-gray-500 text-center text-sm">Start from scratch with an empty page</p>
                     </div>
 
-                    {defaultTemplates.map((template) => (
+                    {filteredTemplates.map(template => (
                         <div
                             key={template.id}
                             onClick={() => handleSelectTemplate(template.id)}
                             className="group cursor-pointer bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-2xl hover:border-blue-500/50 transition-all transform hover:-translate-y-1"
                         >
-                            {/* Thumbnail Preview Area */}
-                            <div className={`h-48 ${template.thumbnail} relative overflow-hidden flex items-center justify-center`}>
+                            {/* Thumbnail */}
+                            <div
+                                className={`h-48 ${template.thumbnail} relative overflow-hidden flex items-center justify-center`}
+                            >
                                 <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors" />
 
-                                {/* Abstract Representation of Layout */}
                                 <div className="w-3/4 h-3/4 bg-white shadow-lg rounded-lg p-3 opacity-60 scale-95 group-hover:scale-100 transition-transform duration-300">
                                     <div className="h-3 w-1/3 bg-gray-200 rounded mb-3"></div>
                                     <div className="space-y-2">
@@ -69,13 +119,8 @@ export default function TemplatesPage() {
                                         <div className="h-2 w-5/6 bg-gray-100 rounded"></div>
                                         <div className="h-2 w-4/6 bg-gray-100 rounded"></div>
                                     </div>
-                                    <div className="mt-4 grid grid-cols-2 gap-2">
-                                        <div className="h-12 bg-gray-50 rounded border border-gray-100"></div>
-                                        <div className="h-12 bg-gray-50 rounded border border-gray-100"></div>
-                                    </div>
                                 </div>
 
-                                {/* Hover Button */}
                                 <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-linear-to-t from-black/50 to-transparent flex justify-center">
                                     <span className="px-4 py-2 bg-white text-gray-900 font-bold rounded-full text-sm shadow-lg flex items-center gap-2">
                                         Use Template <ArrowRight size={14} />
