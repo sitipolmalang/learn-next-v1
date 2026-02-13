@@ -3,25 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import PageRenderer, { Block } from '../components/PageRenderer';
-import { heroSchema } from '../components/editor/schemas/hero.schema';
-import { cardSchema } from '../components/editor/schemas/card.schema';
-import { buttonSchema } from '../components/editor/schemas/button.schema';
-import { titleSchema } from '../components/editor/schemas/title.schema';
-import { imageSchema } from '../components/editor/schemas/image.schema';
-import { featureGridSchema } from '../components/editor/schemas/featureGrid.schema';
-import { testimonialGridSchema } from '../components/editor/schemas/testimonialGrid.schema';
-import { footerSchema } from '../components/editor/schemas/footer.schema';
-
-const schemaMap = {
-    hero: heroSchema,
-    card: cardSchema,
-    button: buttonSchema,
-    title: titleSchema,
-    image: imageSchema,
-    featureGrid: featureGridSchema,
-    testimonialGrid: testimonialGridSchema,
-    footer: footerSchema,
-};
+import { schemaMap } from '../components/editor/schemaMap';
 
 export default function PreviewPage() {
     // 1. Inisialisasi dengan null atau array kosong
