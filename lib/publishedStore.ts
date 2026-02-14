@@ -18,28 +18,33 @@ export function isValidSubdomain(input: string): boolean {
     return SUBDOMAIN_REGEX.test(input);
 }
 
-export async function savePublishedSite(subdomain: string, blocks: Block[]): Promise<PublishedSite> {
+export async function savePublishedSite(
+    subdomain: string,
+    blocks: Block[]
+): Promise<PublishedSite> {
     const normalized = normalizeSubdomain(subdomain);
 
     const site = await prisma.publishedSite.upsert({
         where: { subdomain: normalized },
         update: {
-            blocks: blocks as Prisma.InputJsonValue,
+            blocks: blocks as unknown as Prisma.InputJsonValue,
         },
         create: {
             subdomain: normalized,
-            blocks: blocks as Prisma.InputJsonValue,
+            blocks: blocks as unknown as Prisma.InputJsonValue,
         },
     });
 
     return {
         subdomain: site.subdomain,
-        blocks: site.blocks as Block[],
+        blocks: site.blocks as unknown as Block[],
         publishedAt: site.publishedAt.toISOString(),
     };
 }
 
-export async function getPublishedSite(subdomain: string): Promise<PublishedSite | null> {
+export async function getPublishedSite(
+    subdomain: string
+): Promise<PublishedSite | null> {
     const site = await prisma.publishedSite.findUnique({
         where: {
             subdomain: normalizeSubdomain(subdomain),
@@ -52,7 +57,7 @@ export async function getPublishedSite(subdomain: string): Promise<PublishedSite
 
     return {
         subdomain: site.subdomain,
-        blocks: site.blocks as Block[],
+        blocks: site.blocks as unknown as Block[],
         publishedAt: site.publishedAt.toISOString(),
     };
 }

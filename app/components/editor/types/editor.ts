@@ -1,10 +1,12 @@
+import type { Prisma } from '@prisma/client';
+
 // types/editor.ts
 export type BlockType = 'hero' | 'card' | 'button' | 'title' | 'image' | 'featureGrid' | 'testimonialGrid' | 'footer';
 
 export interface Block {
     id: string;
     type: BlockType;
-    props: Record<string, unknown>; // Menggunakan unknown lebih aman dari any
+    props: Record<string, Prisma.JsonValue>; // Using Prisma.JsonValue to allow for more complex prop structures
     hidden?: boolean;
 }
 
