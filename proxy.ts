@@ -15,7 +15,7 @@ function extractSubdomain(hostHeader: string | null): string | null {
     return subdomain;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     if (pathname !== '/') {
