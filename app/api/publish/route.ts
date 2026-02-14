@@ -28,7 +28,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Data blocks tidak valid.' }, { status: 400 });
     }
 
-    const site = savePublishedSite(subdomain, payload.blocks as Block[]);
+    const site = await savePublishedSite(subdomain, payload.blocks as Block[]);
 
     return NextResponse.json({
         success: true,
@@ -37,4 +37,3 @@ export async function POST(request: Request) {
         url: `http://${site.subdomain}.localhost:3000`,
     });
 }
-

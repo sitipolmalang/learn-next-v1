@@ -1,4 +1,6 @@
 import type { Block } from '@/app/components/editor/types/editor';
+import { prisma } from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 
 export type PublishedSite = {
     subdomain: string;
@@ -8,13 +10,6 @@ export type PublishedSite = {
 
 const SUBDOMAIN_REGEX = /^[a-z0-9](?:[a-z0-9-]{1,61}[a-z0-9])?$/;
 
-declare global {
-    var __publishedSites: Map<string, PublishedSite> | undefined;
-}
-
-const publishedSites = global.__publishedSites ?? new Map<string, PublishedSite>();
-global.__publishedSites = publishedSites;
-
 export function normalizeSubdomain(input: string): string {
     return input.trim().toLowerCase();
 }
@@ -23,17 +18,41 @@ export function isValidSubdomain(input: string): boolean {
     return SUBDOMAIN_REGEX.test(input);
 }
 
-export function savePublishedSite(subdomain: string, blocks: Block[]): PublishedSite {
+export async function savePublishedSite(subdomain: string, blocks: Block[]): Promise<PublishedSite> {
     const normalized = normalizeSubdomain(subdomain);
-    const site: PublishedSite = {
-        subdomain: normalized,
-        blocks,
-        publishedAt: new Date().toISOString(),
+
+    const site = await prisma.publishedSite.upsert({
+        where: { subdomain: normalized },
+        update: {
+            blocks: blocks as Prisma.InputJsonValue,
+        },
+        create: {
+            subdomain: normalized,
+            blocks: blocks as Prisma.InputJsonValue,
+        },
+    });
+
+    return {
+        subdomain: site.subdomain,
+        blocks: site.blocks as Block[],
+        publishedAt: site.publishedAt.toISOString(),
     };
-    publishedSites.set(normalized, site);
-    return site;
 }
 
-export function getPublishedSite(subdomain: string): PublishedSite | null {
-    return publishedSites.get(normalizeSubdomain(subdomain)) ?? null;
+export async function getPublishedSite(subdomain: string): Promise<PublishedSite | null> {
+    const site = await prisma.publishedSite.findUnique({
+        where: {
+            subdomain: normalizeSubdomain(subdomain),
+        },
+    });
+
+    if (!site) {
+        return null;
+    }
+
+    return {
+        subdomain: site.subdomain,
+        blocks: site.blocks as Block[],
+        publishedAt: site.publishedAt.toISOString(),
+    };
 }

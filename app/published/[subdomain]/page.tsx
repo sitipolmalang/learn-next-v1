@@ -8,7 +8,7 @@ type PublishedPageProps = {
 
 export default async function PublishedPage({ params }: PublishedPageProps) {
     const { subdomain } = await params;
-    const site = getPublishedSite(subdomain);
+    const site = await getPublishedSite(subdomain);
 
     if (!site) {
         return (
@@ -29,4 +29,3 @@ export default async function PublishedPage({ params }: PublishedPageProps) {
         </main>
     );
 }
-
