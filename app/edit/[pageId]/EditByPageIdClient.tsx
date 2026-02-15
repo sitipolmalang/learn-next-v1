@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Globe } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import type { Block } from '@/app/components/editor/types/editor';
 import { schemaMap } from '@/app/components/editor/schemas/schema';
@@ -264,16 +264,25 @@ export default function EditByPageId() {
             )}
 
             <main className="flex-1 min-h-0 flex flex-col bg-[#f3f4f6]">
-                <div className={`${isCanvasFullscreen ? 'hidden lg:flex' : 'flex'} border-b border-gray-200 bg-gradient-to-r from-white to-blue-50 px-3 py-2 sm:px-4 sm:py-2.5 items-center justify-between`}>
-                    <Link
-                        href="/dashboard"
-                        className="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm hover:bg-blue-50"
-                    >
-                        <ArrowLeft size={14} />
-                        Kembali ke Dashboard
-                    </Link>
-                    <p className="hidden sm:block text-xs font-medium text-gray-500 truncate max-w-[220px]">
-                        Sedang edit: {pageName}
+                <div className={`${isCanvasFullscreen ? 'hidden lg:flex' : 'flex'} items-center justify-between border-b border-slate-200 bg-white/95 px-3 py-2 backdrop-blur sm:px-4 sm:py-2.5`}>
+                    <div className="flex items-center gap-2">
+                        <Link
+                            href="/dashboard"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
+                        >
+                            <ArrowLeft size={14} />
+                            <span className="hidden sm:inline">Dashboard</span>
+                        </Link>
+                        <Link
+                            href="/websites"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"
+                        >
+                            <Globe size={14} />
+                            <span className="hidden sm:inline">Websites</span>
+                        </Link>
+                    </div>
+                    <p className="max-w-[220px] truncate rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                        Edit: {pageName}
                     </p>
                 </div>
                 <div className={`${isCanvasFullscreen ? 'hidden lg:block' : 'block'}`}>
@@ -285,7 +294,7 @@ export default function EditByPageId() {
                         setViewMode={setViewMode}
                         zoom={zoom}
                         setZoom={setZoom}
-                        handleOpenLivePreview={() => window.open(`http://${subdomain}.localhost:3000`, '_blank')}
+                        handleOpenLivePreview={() => window.open(`/preview?pageId=${pageId}`, '_blank')}
                         onOpenTemplateSelector={() => setShowTemplateSelector(true)}
                     />
                 </div>

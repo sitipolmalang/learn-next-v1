@@ -2,17 +2,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import PageRenderer, { Block } from '../components/PageRenderer';
 import { schemaMap } from '../components/editor/schemaMap';
 
 export default function PreviewPage() {
+    const searchParams = useSearchParams();
+    const pageId = searchParams.get('pageId');
+    const storageKey = pageId ? `preview_blocks_${pageId}` : 'preview_blocks';
+
     // 1. Inisialisasi dengan null atau array kosong
     const [blocks, setBlocks] = useState<Block[] | null>(null);
 
     useEffect(() => {
         // Fungsi untuk mengambil data
         const loadData = () => {
-            const savedBlocks = localStorage.getItem('preview_blocks');
+            const savedBlocks = localStorage.getItem(storageKey);
             if (savedBlocks) {
                 try {
                     const parsed = JSON.parse(savedBlocks);
@@ -31,14 +36,14 @@ export default function PreviewPage() {
 
         // 2. Listener untuk sinkronisasi antar tab (Real-time)
         const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'preview_blocks') {
+            if (e.key === storageKey) {
                 loadData();
             }
         };
 
         window.addEventListener('storage', handleStorageChange);
         return () => window.removeEventListener('storage', handleStorageChange);
-    }, []);
+    }, [storageKey]);
 
     // 3. Tampilkan loading selama blocks masih null (proses sinkronisasi)
     // Ini mencegah render "setengah matang" yang memicu cascading renders
