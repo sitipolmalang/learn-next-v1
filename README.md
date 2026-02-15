@@ -18,16 +18,16 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## .env 
-# Google OAuth / API Credentials
+# .env 
+## Google OAuth / API Credentials
 GOOGLE_CLIENT_ID="google_client_id"
 GOOGLE_CLIENT_SECRET="google_client_secret"
 
 
-# Database Credentials
+## Database Credentials
 NEXTAUTH_URL=http://localhost:3000
-# NEXTAUTH_SECRET="your_nextauth_secret_here"
+## NEXTAUTH_SECRET="your_nextauth_secret_here"
 DATABASE_URL=postgres://username:password@localhost:5432/dbname
 
-## .env.local
+# .env.local
 AUTH_SECRET="your_auth_secret"
