@@ -1,5 +1,3 @@
-import { cn } from '@/lib/utils';
-
 type FooterProps = {
     companyName?: string;
     description?: string;

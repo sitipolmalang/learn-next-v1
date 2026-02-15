@@ -1,6 +1,6 @@
 import PageRenderer from '@/app/components/PageRenderer';
 import { schemaMap } from '@/app/components/editor/schemaMap';
-import { getPublishedSite } from '@/lib/publishedStore';
+import { getPublishedPage } from '@/lib/pages';
 
 type PublishedPageProps = {
     params: Promise<{ subdomain: string }>;
@@ -8,7 +8,7 @@ type PublishedPageProps = {
 
 export default async function PublishedPage({ params }: PublishedPageProps) {
     const { subdomain } = await params;
-    const site = await getPublishedSite(subdomain);
+    const site = await getPublishedPage(subdomain);
 
     if (!site) {
         return (

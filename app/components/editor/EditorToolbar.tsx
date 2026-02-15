@@ -2,6 +2,9 @@ import { useMemo, useState } from 'react';
 import { ExternalLink, Maximize, Minus, Monitor, Plus, Smartphone, Tablet, LayoutTemplate, Upload, X } from 'lucide-react';
 
 interface EditorToolbarProps {
+    pageId: string;
+    pageName: string;
+    subdomain: string;
     viewMode: 'mobile' | 'tablet' | 'desktop';
     setViewMode: (mode: 'mobile' | 'tablet' | 'desktop') => void;
     zoom: number;
@@ -11,6 +14,9 @@ interface EditorToolbarProps {
 }
 
 export default function EditorToolbar({
+    pageId,
+    pageName,
+    subdomain,
     viewMode,
     setViewMode,
     zoom,
@@ -19,17 +25,10 @@ export default function EditorToolbar({
     onOpenTemplateSelector
 }: EditorToolbarProps) {
     const [isPublishOpen, setIsPublishOpen] = useState(false);
-    const [subdomain, setSubdomain] = useState('');
     const [isPublishing, setIsPublishing] = useState(false);
 
     const sanitizedSubdomain = useMemo(
-        () =>
-            subdomain
-                .trim()
-                .toLowerCase()
-                .replace(/[^a-z0-9-]/g, '')
-                .replace(/-+/g, '-')
-                .replace(/^-|-$/g, ''),
+        () => subdomain.trim().toLowerCase(),
         [subdomain]
     );
 
@@ -37,30 +36,17 @@ export default function EditorToolbar({
         ? `http://${sanitizedSubdomain}.localhost:3000`
         : '';
 
-    const isSubdomainValid =
-        sanitizedSubdomain.length >= 3 && sanitizedSubdomain.length <= 63;
-
     const handlePublish = async () => {
-        if (!isSubdomainValid || !publishUrl) return;
-
-        const rawBlocks = localStorage.getItem('preview_blocks');
-        if (!rawBlocks) {
-            window.alert('Data halaman belum tersedia. Silakan coba lagi.');
+        if (!publishUrl) {
+            window.alert('Subdomain belum tersedia untuk halaman ini.');
             return;
         }
 
         setIsPublishing(true);
 
         try {
-            const response = await fetch('/api/publish', {
+            const response = await fetch(`/api/pages/${pageId}/publish`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    subdomain: sanitizedSubdomain,
-                    blocks: JSON.parse(rawBlocks),
-                }),
             });
 
             if (!response.ok) {
@@ -78,12 +64,15 @@ export default function EditorToolbar({
 
     return (
         <>
-            <div className="h-16 bg-white flex items-center justify-between px-6 shadow-sm z-10">
+            <div className="bg-white px-3 py-2 shadow-sm z-10 border-b border-gray-100 lg:h-16 lg:px-6 lg:py-0 lg:flex lg:items-center lg:justify-between">
                 {/* Sisi Kiri: Preview, Template, Publish */}
-                <div className="w-1/4 flex items-center gap-2">
+                <div className="w-full flex items-center gap-2 flex-wrap lg:w-1/3">
+                    <span className="hidden 2xl:inline-block text-xs font-semibold text-gray-500">
+                        {pageName}
+                    </span>
                     <button
                         onClick={handleOpenLivePreview}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-bold hover:bg-blue-100 transition-colors border border-blue-100"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 text-blue-600 rounded-md text-[11px] sm:text-xs font-bold hover:bg-blue-100 transition-colors border border-blue-100"
                         title="Live Preview"
                     >
                         <ExternalLink size={14} />
@@ -92,7 +81,7 @@ export default function EditorToolbar({
 
                     <button
                         onClick={onOpenTemplateSelector}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-md text-xs font-bold hover:bg-gray-100 transition-colors border border-gray-200"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 text-gray-600 rounded-md text-[11px] sm:text-xs font-bold hover:bg-gray-100 transition-colors border border-gray-200"
                         title="Change Template"
                     >
                         <LayoutTemplate size={14} />
@@ -101,7 +90,7 @@ export default function EditorToolbar({
 
                     <button
                         onClick={() => setIsPublishOpen(true)}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-md text-xs font-bold hover:bg-emerald-100 transition-colors border border-emerald-100"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-50 text-emerald-700 rounded-md text-[11px] sm:text-xs font-bold hover:bg-emerald-100 transition-colors border border-emerald-100"
                         title="Publish Website"
                     >
                         <Upload size={14} />
@@ -110,7 +99,7 @@ export default function EditorToolbar({
                 </div>
 
                 {/* Tengah: Device Switcher */}
-                <div className="flex items-center bg-gray-100 p-1 rounded-lg">
+                <div className="mt-2 lg:mt-0 w-full lg:w-auto flex items-center justify-center bg-gray-100 p-1 rounded-lg">
                     <button
                         onClick={() => { setViewMode('mobile'); setZoom(1); }}
                         className={`p-1.5 rounded-md transition-all ${viewMode === 'mobile' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500'}`}
@@ -135,7 +124,7 @@ export default function EditorToolbar({
                 </div>
 
                 {/* Kanan: Zoom Controls */}
-                <div className="w-1/4 flex justify-end items-center gap-2">
+                <div className="mt-2 lg:mt-0 w-full lg:w-1/3 flex justify-center lg:justify-end items-center gap-2">
                     <div className="flex items-center bg-gray-50 border rounded-lg p-1">
                         <button
                             onClick={() => setZoom(prev => Math.max(0.2, prev - 0.1))}
@@ -183,16 +172,12 @@ export default function EditorToolbar({
 
                         <div className="px-5 py-4 space-y-3">
                             <label className="text-sm text-gray-700 font-medium block">
-                                Pilih subdomain
+                                Subdomain halaman
                             </label>
                             <div className="flex items-center rounded-lg border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500">
-                                <input
-                                    type="text"
-                                    value={subdomain}
-                                    onChange={(e) => setSubdomain(e.target.value)}
-                                    placeholder="contoh: toko-online"
-                                    className="flex-1 px-3 py-2.5 text-sm outline-none"
-                                />
+                                <div className="flex-1 px-3 py-2.5 text-sm text-gray-800 bg-white">
+                                    {sanitizedSubdomain}
+                                </div>
                                 <span className="px-3 py-2.5 text-sm text-gray-500 bg-gray-50 border-l border-gray-200">
                                     .localhost:3000
                                 </span>
@@ -201,12 +186,6 @@ export default function EditorToolbar({
                             <p className="text-xs text-gray-500">
                                 URL publish: {publishUrl || 'http://subdomain.localhost:3000'}
                             </p>
-
-                            {!isSubdomainValid && sanitizedSubdomain.length > 0 && (
-                                <p className="text-xs text-red-500">
-                                    Subdomain harus 3-63 karakter (huruf kecil, angka, atau `-`).
-                                </p>
-                            )}
                         </div>
 
                         <div className="px-5 py-4 border-t border-gray-100 flex justify-end gap-2">
@@ -218,7 +197,7 @@ export default function EditorToolbar({
                             </button>
                             <button
                                 onClick={handlePublish}
-                                disabled={!isSubdomainValid || isPublishing}
+                                disabled={!publishUrl || isPublishing}
                                 className="px-3 py-2 text-sm rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-emerald-300 disabled:cursor-not-allowed"
                             >
                                 {isPublishing ? 'Publishing...' : 'Publish'}

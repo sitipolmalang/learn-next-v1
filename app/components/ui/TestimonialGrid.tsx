@@ -55,7 +55,9 @@ export default function TestimonialGrid({
                             )}
                         >
                             <Quote className="absolute top-6 left-6 text-gray-200" size={40} />
-                            <p className="relative z-10 text-gray-600 mb-6 leading-relaxed italic">"{t.quote}"</p>
+                            <p className="relative z-10 text-gray-600 mb-6 leading-relaxed italic">
+                                &quot;{t.quote}&quot;
+                            </p>
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-500">
                                     {t.name.charAt(0)}
