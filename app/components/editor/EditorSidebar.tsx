@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp, Eye, EyeOff, RotateCcw } from 'lucide-react';
 import { Block, BlockType, Field } from './types/editor';
 import PropsEditor from './PropsEditor';
+import { cn } from '@/lib/utils';
 
 interface EditorSidebarProps {
     blocks: Block[];
@@ -10,6 +11,7 @@ interface EditorSidebarProps {
     triggerReset: (id: string) => void;
     handleUpdateProps: (id: string, newProps: Record<string, string | number | boolean>) => void;
     schemaMap: Record<BlockType, Record<string, Field>>;
+    className?: string;
 }
 
 export default function EditorSidebar({
@@ -19,10 +21,14 @@ export default function EditorSidebar({
     toggleVisibility,
     triggerReset,
     handleUpdateProps,
-    schemaMap
+    schemaMap,
+    className,
 }: EditorSidebarProps) {
     return (
-        <aside className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r flex flex-col bg-white z-20 max-h-[40vh] lg:max-h-none">
+        <aside className={cn(
+            'w-full lg:w-80 border-b lg:border-b-0 lg:border-r flex flex-col bg-white z-20 max-h-[40vh] lg:max-h-none',
+            className
+        )}>
             <div className="p-4 mb-2">
                 <h1 className="font-bold text-gray-900 text-center">Page Editor</h1>
                 <p className="text-xs text-gray-500 text-center">Customize your sections</p>

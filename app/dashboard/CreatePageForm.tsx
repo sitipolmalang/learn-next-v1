@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { defaultTemplates } from '@/app/components/templates/defaults';
 
 type CreatePageFormProps = {
@@ -27,6 +28,7 @@ export default function CreatePageForm({ initialTemplateId, action }: CreatePage
     const [name, setName] = useState('');
     const [subdomain, setSubdomain] = useState('');
     const [templateId, setTemplateId] = useState(resolvedDefaultTemplateId);
+    const [isSubdomainManuallyEdited, setIsSubdomainManuallyEdited] = useState(false);
 
     return (
         <form action={action} className="mt-5 space-y-4">
@@ -41,7 +43,7 @@ export default function CreatePageForm({ initialTemplateId, action }: CreatePage
                         onChange={(event) => {
                             const value = event.target.value;
                             setName(value);
-                            if (!subdomain) {
+                            if (!isSubdomainManuallyEdited) {
                                 setSubdomain(toSlug(value));
                             }
                         }}
@@ -59,7 +61,12 @@ export default function CreatePageForm({ initialTemplateId, action }: CreatePage
                             minLength={3}
                             maxLength={63}
                             value={subdomain}
-                            onChange={(event) => setSubdomain(toSlug(event.target.value))}
+                            onChange={(event) => {
+                                const rawValue = event.target.value;
+                                const sanitizedValue = toSlug(rawValue);
+                                setSubdomain(sanitizedValue);
+                                setIsSubdomainManuallyEdited(rawValue.trim() !== '');
+                            }}
                             placeholder="contoh: product-a"
                             className="w-full px-3 py-2 text-sm outline-none"
                         />
@@ -72,14 +79,11 @@ export default function CreatePageForm({ initialTemplateId, action }: CreatePage
             </div>
 
             <div>
-                <div className="mb-2 flex items-center justify-between">
+                <div className="mb-2">
                     <label className="text-sm font-medium text-gray-700">Pilih template</label>
-                    <a
-                        href="/templates"
-                        className="text-xs font-semibold text-blue-700 hover:text-blue-900"
-                    >
-                        Lihat semua template
-                    </a>
+                    <p className="mt-0.5 text-xs text-gray-500">
+                        Klik kartu template untuk melihat gambaran style sebelum membuat halaman.
+                    </p>
                 </div>
                 <input type="hidden" name="templateId" value={templateId} />
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -111,13 +115,26 @@ export default function CreatePageForm({ initialTemplateId, action }: CreatePage
                         );
                     })}
                 </div>
+                <div className="mt-3 rounded-lg border border-blue-100 bg-blue-50/60 p-3 flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-xs text-blue-900 font-medium flex items-center gap-1.5">
+                        <Sparkles size={14} />
+                        Butuh inspirasi lebih banyak?
+                    </p>
+                    <a
+                        href="/templates"
+                        className="rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 border border-blue-200 hover:bg-blue-100"
+                    >
+                        Lihat semua template
+                    </a>
+                </div>
             </div>
 
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-center pt-1">
                 <button
                     type="submit"
-                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 hover:from-blue-700 hover:to-indigo-700"
                 >
+                    <ArrowRight size={16} />
                     Create dan Edit
                 </button>
             </div>

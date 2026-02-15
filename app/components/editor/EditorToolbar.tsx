@@ -2,9 +2,12 @@ import { useMemo, useState } from 'react';
 import { ExternalLink, Maximize, Minus, Monitor, Plus, Smartphone, Tablet, LayoutTemplate, Upload, X } from 'lucide-react';
 
 interface EditorToolbarProps {
-    pageId: string;
+    publishMode?: 'page' | 'custom';
+    pageId?: string;
     pageName: string;
-    subdomain: string;
+    subdomain?: string;
+    templateId?: string;
+    storageKey?: string;
     viewMode: 'mobile' | 'tablet' | 'desktop';
     setViewMode: (mode: 'mobile' | 'tablet' | 'desktop') => void;
     zoom: number;
@@ -14,9 +17,12 @@ interface EditorToolbarProps {
 }
 
 export default function EditorToolbar({
+    publishMode = 'page',
     pageId,
     pageName,
     subdomain,
+    templateId,
+    storageKey = 'preview_blocks',
     viewMode,
     setViewMode,
     zoom,
@@ -26,10 +32,17 @@ export default function EditorToolbar({
 }: EditorToolbarProps) {
     const [isPublishOpen, setIsPublishOpen] = useState(false);
     const [isPublishing, setIsPublishing] = useState(false);
+    const [customSubdomain, setCustomSubdomain] = useState('');
 
     const sanitizedSubdomain = useMemo(
-        () => subdomain.trim().toLowerCase(),
-        [subdomain]
+        () =>
+            (publishMode === 'page' ? subdomain ?? '' : customSubdomain)
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9-]/g, '')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, ''),
+        [customSubdomain, publishMode, subdomain]
     );
 
     const publishUrl = sanitizedSubdomain
@@ -45,9 +58,31 @@ export default function EditorToolbar({
         setIsPublishing(true);
 
         try {
-            const response = await fetch(`/api/pages/${pageId}/publish`, {
-                method: 'POST',
-            });
+            let response: Response;
+
+            if (publishMode === 'page') {
+                if (!pageId) {
+                    throw new Error('Page ID tidak tersedia.');
+                }
+                response = await fetch(`/api/pages/${pageId}/publish`, { method: 'POST' });
+            } else {
+                const rawBlocks = localStorage.getItem(storageKey);
+                if (!rawBlocks) {
+                    window.alert('Data halaman belum tersedia. Silakan coba lagi.');
+                    return;
+                }
+
+                response = await fetch('/api/publish', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subdomain: sanitizedSubdomain,
+                        blocks: JSON.parse(rawBlocks),
+                        templateId: templateId ?? 'custom',
+                        name: pageName,
+                    }),
+                });
+            }
 
             if (!response.ok) {
                 throw new Error('Publish gagal');
@@ -175,9 +210,19 @@ export default function EditorToolbar({
                                 Subdomain halaman
                             </label>
                             <div className="flex items-center rounded-lg border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500">
-                                <div className="flex-1 px-3 py-2.5 text-sm text-gray-800 bg-white">
-                                    {sanitizedSubdomain}
-                                </div>
+                                {publishMode === 'page' ? (
+                                    <div className="flex-1 px-3 py-2.5 text-sm text-gray-800 bg-white">
+                                        {sanitizedSubdomain}
+                                    </div>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        value={customSubdomain}
+                                        onChange={(e) => setCustomSubdomain(e.target.value)}
+                                        placeholder="contoh: toko-online"
+                                        className="flex-1 px-3 py-2.5 text-sm outline-none"
+                                    />
+                                )}
                                 <span className="px-3 py-2.5 text-sm text-gray-500 bg-gray-50 border-l border-gray-200">
                                     .localhost:3000
                                 </span>

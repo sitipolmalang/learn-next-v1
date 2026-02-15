@@ -30,7 +30,7 @@ export default function TemplatesPage() {
     }, [activeCategory, search]);
 
     const handleSelectTemplate = (templateId: string) => {
-        router.push(`/dashboard?templateId=${templateId}`);
+        router.push(`/edit?templateId=${templateId}`);
     };
 
     // Fungsi untuk membuka preview di tab baru, HARUS DIGANTI
@@ -92,7 +92,7 @@ export default function TemplatesPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {/* Blank Canvas Option */}
-                    <div onClick={() => router.push('/dashboard')}
+                    <div onClick={() => router.push('/edit')}
                         className="group cursor-pointer bg-white rounded-2xl border-2 border-dashed border-gray-300 hover:border-blue-500 hover:shadow-xl transition-all p-8 flex flex-col items-center justify-center min-h-75">
                         <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mb-6 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

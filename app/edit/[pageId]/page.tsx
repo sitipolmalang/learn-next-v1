@@ -38,10 +38,13 @@ export default function EditByPageId() {
     const [subdomain, setSubdomain] = useState('');
     const [blocks, setBlocks] = useState<Block[]>(INITIAL_BLOCKS);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [openId, setOpenId] = useState<string | null>('hero');
+    const [openId, setOpenId] = useState<string | null>(null);
     const [viewMode, setViewMode] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
     const [zoom, setZoom] = useState(1);
     const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+    const [isMobileSidebarMounted, setIsMobileSidebarMounted] = useState(false);
+    const [isMobileSidebarVisible, setIsMobileSidebarVisible] = useState(false);
+    const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
     const [resetModal, setResetModal] = useState<{ isOpen: boolean; blockId: string | null }>({
         isOpen: false,
         blockId: null,
@@ -49,6 +52,9 @@ export default function EditByPageId() {
 
     const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isInitialSyncRef = useRef(true);
+    const closeDrawerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const swipeStartXRef = useRef(0);
+    const swipeCurrentXRef = useRef(0);
 
     useEffect(() => {
         const loadPage = async () => {
@@ -103,6 +109,71 @@ export default function EditByPageId() {
         };
     }, [blocks, isLoaded, pageId]);
 
+    useEffect(() => {
+        const media = window.matchMedia('(min-width: 1024px)');
+        const handleChange = (event: MediaQueryListEvent | MediaQueryList) => {
+            if (event.matches) {
+                setIsMobileSidebarVisible(false);
+                setIsMobileSidebarMounted(false);
+                setIsCanvasFullscreen(false);
+            } else {
+                // Small screens start collapsed for faster navigation.
+                setOpenId(null);
+            }
+        };
+
+        handleChange(media);
+        media.addEventListener('change', handleChange);
+
+        return () => {
+            media.removeEventListener('change', handleChange);
+        };
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (closeDrawerTimerRef.current) {
+                clearTimeout(closeDrawerTimerRef.current);
+            }
+        };
+    }, []);
+
+    const openMobileDrawer = useCallback(() => {
+        if (closeDrawerTimerRef.current) {
+            clearTimeout(closeDrawerTimerRef.current);
+        }
+        setIsMobileSidebarMounted(true);
+        // Run on next frame to trigger CSS transition.
+        requestAnimationFrame(() => setIsMobileSidebarVisible(true));
+    }, []);
+
+    const closeMobileDrawer = useCallback(() => {
+        setIsMobileSidebarVisible(false);
+        if (closeDrawerTimerRef.current) {
+            clearTimeout(closeDrawerTimerRef.current);
+        }
+        closeDrawerTimerRef.current = setTimeout(() => {
+            setIsMobileSidebarMounted(false);
+            setOpenId(null);
+        }, 220);
+    }, []);
+
+    const handleDrawerTouchStart = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
+        swipeStartXRef.current = event.touches[0]?.clientX ?? 0;
+        swipeCurrentXRef.current = swipeStartXRef.current;
+    }, []);
+
+    const handleDrawerTouchMove = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
+        swipeCurrentXRef.current = event.touches[0]?.clientX ?? swipeCurrentXRef.current;
+    }, []);
+
+    const handleDrawerTouchEnd = useCallback(() => {
+        const deltaX = swipeCurrentXRef.current - swipeStartXRef.current;
+        if (deltaX < -60) {
+            closeMobileDrawer();
+        }
+    }, [closeMobileDrawer]);
+
     const handleUpdateProps = useCallback((id: string, newProps: EditorProps) => {
         setBlocks((prev) =>
             prev.map((block) =>
@@ -144,7 +215,7 @@ export default function EditByPageId() {
     }
 
     return (
-        <div className="flex h-screen flex-col lg:flex-row bg-white overflow-hidden">
+        <div className="flex h-[100dvh] flex-col lg:flex-row bg-white overflow-hidden">
             <EditorSidebar
                 blocks={blocks}
                 openId={openId}
@@ -153,10 +224,47 @@ export default function EditByPageId() {
                 triggerReset={(id) => setResetModal({ isOpen: true, blockId: id })}
                 handleUpdateProps={handleUpdateProps}
                 schemaMap={schemaMap}
+                className="hidden lg:flex"
             />
 
-            <main className="flex-1 flex flex-col bg-[#f3f4f6]">
-                <div className="border-b border-gray-200 bg-gradient-to-r from-white to-blue-50 px-3 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between">
+            {isMobileSidebarMounted && (
+                <div className="fixed inset-0 z-40 lg:hidden">
+                    <div
+                        className={`absolute inset-0 bg-black/40 transition-opacity duration-200 ${isMobileSidebarVisible ? 'opacity-100' : 'opacity-0'}`}
+                        onClick={closeMobileDrawer}
+                    />
+                    <div
+                        className={`absolute left-0 top-0 h-full w-[88vw] max-w-sm bg-white shadow-xl transition-transform duration-200 ease-out ${isMobileSidebarVisible ? 'translate-x-0' : '-translate-x-full'}`}
+                        onTouchStart={handleDrawerTouchStart}
+                        onTouchMove={handleDrawerTouchMove}
+                        onTouchEnd={handleDrawerTouchEnd}
+                    >
+                        <div className="flex h-12 items-center justify-between border-b border-gray-200 px-4">
+                            <p className="text-sm font-semibold text-gray-800">Sections</p>
+                            <button
+                                type="button"
+                                onClick={closeMobileDrawer}
+                                className="rounded-md border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                            >
+                                Tutup
+                            </button>
+                        </div>
+                        <EditorSidebar
+                            blocks={blocks}
+                            openId={openId}
+                            setOpenId={setOpenId}
+                            toggleVisibility={toggleVisibility}
+                            triggerReset={(id) => setResetModal({ isOpen: true, blockId: id })}
+                            handleUpdateProps={handleUpdateProps}
+                            schemaMap={schemaMap}
+                            className="h-[calc(100%-3rem)] max-h-full border-r border-b-0"
+                        />
+                    </div>
+                </div>
+            )}
+
+            <main className="flex-1 min-h-0 flex flex-col bg-[#f3f4f6]">
+                <div className={`${isCanvasFullscreen ? 'hidden lg:flex' : 'flex'} border-b border-gray-200 bg-gradient-to-r from-white to-blue-50 px-3 py-2 sm:px-4 sm:py-2.5 items-center justify-between`}>
                     <Link
                         href="/dashboard"
                         className="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm hover:bg-blue-50"
@@ -168,19 +276,54 @@ export default function EditByPageId() {
                         Sedang edit: {pageName}
                     </p>
                 </div>
-                <EditorToolbar
-                    pageId={pageId}
-                    pageName={pageName}
-                    subdomain={subdomain}
+                <div className={`${isCanvasFullscreen ? 'hidden lg:block' : 'block'}`}>
+                    <EditorToolbar
+                        pageId={pageId}
+                        pageName={pageName}
+                        subdomain={subdomain}
+                        viewMode={viewMode}
+                        setViewMode={setViewMode}
+                        zoom={zoom}
+                        setZoom={setZoom}
+                        handleOpenLivePreview={() => window.open(`http://${subdomain}.localhost:3000`, '_blank')}
+                        onOpenTemplateSelector={() => setShowTemplateSelector(true)}
+                    />
+                </div>
+
+                <div className={`${isCanvasFullscreen ? 'hidden' : 'flex'} lg:hidden border-b border-gray-200 bg-white px-3 py-2 items-center gap-2`}>
+                    <button
+                        type="button"
+                        onClick={openMobileDrawer}
+                        className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                    >
+                        Sections
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setIsCanvasFullscreen(true)}
+                        className="rounded-md border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                    >
+                        Fullscreen
+                    </button>
+                </div>
+
+                <EditorCanvas
+                    blocks={blocks}
                     viewMode={viewMode}
-                    setViewMode={setViewMode}
                     zoom={zoom}
-                    setZoom={setZoom}
-                    handleOpenLivePreview={() => window.open(`http://${subdomain}.localhost:3000`, '_blank')}
-                    onOpenTemplateSelector={() => setShowTemplateSelector(true)}
+                    schemaMap={schemaMap}
+                    isFullscreen={isCanvasFullscreen}
                 />
 
-                <EditorCanvas blocks={blocks} viewMode={viewMode} zoom={zoom} schemaMap={schemaMap} />
+                {isCanvasFullscreen && (
+                    <button
+                        type="button"
+                        onClick={() => setIsCanvasFullscreen(false)}
+                        className="fixed bottom-4 right-4 z-30 rounded-full bg-gray-900 px-4 py-2 text-xs font-semibold text-white shadow-lg lg:hidden"
+                    >
+                        Keluar Fullscreen
+                    </button>
+                )}
             </main>
 
             <ResetModal
