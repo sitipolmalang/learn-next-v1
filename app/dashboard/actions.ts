@@ -61,6 +61,7 @@ export async function deletePageAction(formData: FormData) {
     });
 
     revalidatePath('/dashboard');
+    revalidatePath('/websites');
 }
 
 export async function publishPageAction(formData: FormData) {
@@ -78,6 +79,25 @@ export async function publishPageAction(formData: FormData) {
     });
 
     revalidatePath('/dashboard');
+    revalidatePath('/websites');
+}
+
+export async function unpublishPageAction(formData: FormData) {
+    const session = await requireUser();
+    const pageId = String(formData.get('pageId') ?? '');
+
+    await prisma.page.updateMany({
+        where: {
+            id: pageId,
+            ownerId: session.user.id,
+        },
+        data: {
+            isPublished: false,
+        },
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath('/websites');
 }
 
 export async function signOutAction() {

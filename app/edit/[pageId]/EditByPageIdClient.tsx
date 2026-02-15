@@ -56,6 +56,17 @@ export default function EditByPageId() {
     const swipeStartXRef = useRef(0);
     const swipeCurrentXRef = useRef(0);
 
+    const persistBlocks = useCallback(
+        async (nextBlocks: Block[]) => {
+            await fetch(`/api/pages/${pageId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ blocks: nextBlocks }),
+            });
+        },
+        [pageId]
+    );
+
     useEffect(() => {
         const loadPage = async () => {
             const response = await fetch(`/api/pages/${pageId}`);
@@ -95,11 +106,7 @@ export default function EditByPageId() {
         }
 
         saveTimerRef.current = setTimeout(() => {
-            void fetch(`/api/pages/${pageId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ blocks }),
-            });
+            void persistBlocks(blocks);
         }, 500);
 
         return () => {
@@ -107,7 +114,7 @@ export default function EditByPageId() {
                 clearTimeout(saveTimerRef.current);
             }
         };
-    }, [blocks, isLoaded, pageId]);
+    }, [blocks, isLoaded, pageId, persistBlocks]);
 
     useEffect(() => {
         const media = window.matchMedia('(min-width: 1024px)');
@@ -210,6 +217,21 @@ export default function EditByPageId() {
         setResetModal({ isOpen: false, blockId: null });
     }, [blocks, handleUpdateProps, resetModal.blockId]);
 
+    const handleOpenDraftPreview = useCallback(async () => {
+        if (saveTimerRef.current) {
+            clearTimeout(saveTimerRef.current);
+            saveTimerRef.current = null;
+        }
+
+        try {
+            await persistBlocks(blocks);
+        } catch {
+            // Ignore save errors here, preview will still open with latest persisted state.
+        }
+
+        window.open(`/preview/${pageId}`, '_blank');
+    }, [blocks, pageId, persistBlocks]);
+
     if (!isLoaded) {
         return <div className="flex h-screen items-center justify-center">Loading editor...</div>;
     }
@@ -294,7 +316,7 @@ export default function EditByPageId() {
                         setViewMode={setViewMode}
                         zoom={zoom}
                         setZoom={setZoom}
-                        handleOpenLivePreview={() => window.open(`/preview?pageId=${pageId}`, '_blank')}
+                        handleOpenLivePreview={handleOpenDraftPreview}
                         onOpenTemplateSelector={() => setShowTemplateSelector(true)}
                     />
                 </div>
