@@ -1,7 +1,8 @@
 'use client';
 
 import { Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
+import ConfirmModal from '@/app/components/ui/ConfirmModal';
 
 type DeletePageButtonProps = {
     pageId: string;
@@ -12,6 +13,17 @@ type DeletePageButtonProps = {
 
 export default function DeletePageButton({ pageId, pageName, action, compact = false }: DeletePageButtonProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const [isPending, startTransition] = useTransition();
+
+    const handleConfirmDelete = () => {
+        const formData = new FormData();
+        formData.set('pageId', pageId);
+
+        setIsOpen(false);
+        startTransition(async () => {
+            await action(formData);
+        });
+    };
 
     return (
         <>
@@ -27,35 +39,20 @@ export default function DeletePageButton({ pageId, pageName, action, compact = f
                 <span className={compact ? 'hidden sm:inline' : ''}>Delete</span>
             </button>
 
-            {isOpen && (
-                <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-[1px]">
-                    <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl">
-                        <h3 className="text-base font-semibold text-slate-900">Hapus halaman?</h3>
-                        <p className="mt-2 text-sm text-slate-600">
-                            Halaman <span className="font-semibold">{pageName}</span> akan dihapus permanen.
-                        </p>
-                        <div className="mt-4 flex justify-end gap-2">
-                            <button
-                                type="button"
-                                onClick={() => setIsOpen(false)}
-                                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50"
-                            >
-                                Batal
-                            </button>
-                            <form action={action}>
-                                <input type="hidden" name="pageId" value={pageId} />
-                                <button
-                                    type="submit"
-                                    className="inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-rose-700"
-                                >
-                                    <Trash2 size={14} />
-                                    Ya, Hapus
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ConfirmModal
+                open={isOpen}
+                title="Hapus halaman?"
+                message={
+                    <>
+                        Halaman <span className="font-semibold">{pageName}</span> akan dihapus permanen.
+                    </>
+                }
+                confirmLabel="Ya, Hapus"
+                confirmTone="danger"
+                pending={isPending}
+                onCancel={() => setIsOpen(false)}
+                onConfirm={handleConfirmDelete}
+            />
         </>
     );
 }

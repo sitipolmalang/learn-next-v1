@@ -7,19 +7,18 @@ import {
     Home,
     ChevronRight,
     Plus,
-    MoreVertical,
     Clock3,
-    Link2,
     Sparkles,
 } from 'lucide-react';
 import { requireUser } from '@/lib/authz';
 import { prisma } from '@/lib/prisma';
-import { deletePageAction, publishPageAction } from '@/app/dashboard/actions';
-import DeletePageButton from '@/app/dashboard/DeletePageButton';
+import { deletePageAction, publishPageAction, unpublishPageAction } from '@/app/dashboard/actions';
 import CopyUrlButton from '@/app/dashboard/CopyUrlButton';
 import { defaultTemplates } from '@/app/components/templates/defaults';
 import AppSidebar from '@/app/components/layout/AppSidebar';
 import WebsitesFilters from './WebsitesFilters';
+import WebsiteCardMenu from './WebsiteCardMenu';
+import PublishToggleButton from './PublishToggleButton';
 
 type WebsitesPageProps = {
     searchParams: Promise<{
@@ -201,9 +200,16 @@ export default async function WebsitesPage({ searchParams }: WebsitesPageProps) 
                                                             <h3 className="truncate text-xl font-bold text-slate-900">{page.name}</h3>
                                                             <p className="mt-0.5 text-xs text-slate-500">@{page.subdomain}</p>
                                                         </div>
-                                                        <span className="rounded-lg border border-slate-200 bg-slate-50 p-1.5 text-slate-400">
-                                                            <MoreVertical size={16} />
-                                                        </span>
+                                                        <WebsiteCardMenu
+                                                            pageId={page.id}
+                                                            pageName={page.name}
+                                                            siteUrl={siteUrl}
+                                                            isPublished={page.isPublished}
+                                                            publishAction={publishPageAction}
+                                                            unpublishAction={unpublishPageAction}
+                                                            deleteAction={deletePageAction}
+                                                            showStatusActions={false}
+                                                        />
                                                     </div>
 
                                                     {page.isPublished ? (
@@ -231,39 +237,17 @@ export default async function WebsitesPage({ searchParams }: WebsitesPageProps) 
                                                     <div className="sticky bottom-0 z-10 -mx-6 mt-auto grid grid-cols-2 gap-2 border-t border-slate-100 bg-white/95 px-6 pt-3 pb-0 backdrop-blur-sm md:static md:mx-0 md:bg-transparent md:px-0 md:pb-0 md:backdrop-blur-none">
                                                         <Link
                                                             href={`/edit/${page.id}`}
-                                                            className="col-span-2 inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+                                                            className="inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
                                                         >
                                                             Edit Website
                                                         </Link>
-                                                        {page.isPublished ? (
-                                                            <a
-                                                                href={siteUrl}
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                                className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"
-                                                            >
-                                                                <Link2 size={13} />
-                                                                Visit Website
-                                                            </a>
-                                                        ) : (
-                                                            <form action={publishPageAction}>
-                                                                <input type="hidden" name="pageId" value={page.id} />
-                                                                <button
-                                                                    type="submit"
-                                                                    className="w-full rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100"
-                                                                >
-                                                                    Publish
-                                                                </button>
-                                                            </form>
-                                                        )}
-                                                        <div className="flex justify-end">
-                                                            <DeletePageButton
-                                                                action={deletePageAction}
-                                                                pageId={page.id}
-                                                                pageName={page.name}
-                                                                compact
-                                                            />
-                                                        </div>
+                                                        <PublishToggleButton
+                                                            pageId={page.id}
+                                                            pageName={page.name}
+                                                            isPublished={page.isPublished}
+                                                            publishAction={publishPageAction}
+                                                            unpublishAction={unpublishPageAction}
+                                                        />
                                                     </div>
                                                 </div>
                                             </article>
