@@ -1,5 +1,4 @@
-import Image from "next/image";
-import WelcomeComponent from "./components/WellcomeComponent";
+import WelcomeComponent from "./components/WelcomeComponent";
 
 export default function Home() {
   return (
