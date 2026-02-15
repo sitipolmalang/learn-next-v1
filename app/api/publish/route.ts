@@ -69,7 +69,7 @@ export async function POST(request: Request) {
         const typedError = error as { code?: string };
         if (typedError.code === 'P2002') {
             return NextResponse.json(
-                { error: 'Subdomain sudah dipakai. Gunakan subdomain lain.' },
+                { error: 'Subdomain sudah dipakai.' },
                 { status: 409 }
             );
         }

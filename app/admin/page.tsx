@@ -4,11 +4,15 @@ import { requireAdmin } from '@/lib/authz';
 import { prisma } from '@/lib/prisma';
 import { deleteAnyPageAction, deleteUserAction, setUserRoleAction } from './actions';
 import DeleteUserButton from './DeleteUserButton';
+import AppSidebar from '@/app/components/layout/AppSidebar';
+import DeletePageButton from '@/app/dashboard/DeletePageButton';
 
 const PRIMARY_ADMIN_EMAIL = 'wahidikqbal@gmail.com';
 
 export default async function AdminPage() {
     const session = await requireAdmin();
+    const profileImage = session.user.image || '/default-avatar.svg';
+    const profileName = session.user.name?.trim() || session.user.email?.split('@')[0] || 'User';
 
     const [users, pages] = await Promise.all([
         prisma.user.findMany({
@@ -28,22 +32,34 @@ export default async function AdminPage() {
     ]);
 
     return (
-        <main className="min-h-screen bg-gray-50 py-10 px-4">
-            <div className="mx-auto w-full max-w-7xl">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Admin Panel</h1>
-                        <p className="text-sm text-gray-600">Kelola user dan halaman SaaS.</p>
-                    </div>
-                    <Link
-                        href="/dashboard"
-                        className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-                    >
-                        User Panel
-                    </Link>
-                </div>
+        <main className="min-h-screen bg-slate-50">
+            <div className="mx-auto flex min-h-screen w-full">
+                <AppSidebar
+                    active="admin"
+                    user={{
+                        name: profileName,
+                        email: session.user.email ?? '',
+                        image: profileImage,
+                    }}
+                    isAdmin
+                    footerLink={{ href: '/dashboard', label: 'Dashboard' }}
+                />
 
-                <section className="mt-8 rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
+                <section className="flex-1 px-4 py-6 sm:px-6 lg:px-10">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">Admin Panel</h1>
+                            <p className="text-sm text-gray-600">Kelola user dan halaman SaaS.</p>
+                        </div>
+                        <Link
+                            href="/dashboard"
+                            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                        >
+                            User Panel
+                        </Link>
+                    </div>
+
+                    <section className="mt-8 rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
                     <h2 className="text-lg font-semibold text-gray-900">Users</h2>
                     <div className="mt-4 space-y-3 md:hidden">
                         {users.map((user) => (
@@ -155,9 +171,9 @@ export default async function AdminPage() {
                             </tbody>
                         </table>
                     </div>
-                </section>
+                    </section>
 
-                <section className="mt-6 rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
+                    <section className="mt-6 rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
                     <h2 className="text-lg font-semibold text-gray-900">Semua Halaman</h2>
                     <div className="mt-4 space-y-3 md:hidden">
                         {pages.map((page) => (
@@ -187,15 +203,11 @@ export default async function AdminPage() {
                                     >
                                         Edit
                                     </Link>
-                                    <form action={deleteAnyPageAction}>
-                                        <input type="hidden" name="pageId" value={page.id} />
-                                        <button
-                                            type="submit"
-                                            className="rounded-md bg-red-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
-                                        >
-                                            Delete
-                                        </button>
-                                    </form>
+                                    <DeletePageButton
+                                        action={deleteAnyPageAction}
+                                        pageId={page.id}
+                                        pageName={page.name}
+                                    />
                                 </div>
                             </article>
                         ))}
@@ -237,15 +249,11 @@ export default async function AdminPage() {
                                                 >
                                                     Edit
                                                 </Link>
-                                                <form action={deleteAnyPageAction}>
-                                                    <input type="hidden" name="pageId" value={page.id} />
-                                                    <button
-                                                        type="submit"
-                                                        className="rounded-md bg-red-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                </form>
+                                                <DeletePageButton
+                                                    action={deleteAnyPageAction}
+                                                    pageId={page.id}
+                                                    pageName={page.name}
+                                                />
                                             </div>
                                         </td>
                                     </tr>
@@ -253,6 +261,7 @@ export default async function AdminPage() {
                             </tbody>
                         </table>
                     </div>
+                    </section>
                 </section>
             </div>
         </main>

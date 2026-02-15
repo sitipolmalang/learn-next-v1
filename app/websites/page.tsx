@@ -6,21 +6,20 @@ import {
     Pencil,
     Home,
     ChevronRight,
-    LayoutGrid,
-    CreditCard,
-    BarChart3,
-    Store,
     Plus,
-    Search,
     MoreVertical,
-    FolderKanban,
+    Clock3,
+    Link2,
+    Sparkles,
 } from 'lucide-react';
 import { requireUser } from '@/lib/authz';
 import { prisma } from '@/lib/prisma';
-import { deletePageAction, publishPageAction, signOutAction } from '@/app/dashboard/actions';
+import { deletePageAction, publishPageAction } from '@/app/dashboard/actions';
 import DeletePageButton from '@/app/dashboard/DeletePageButton';
 import CopyUrlButton from '@/app/dashboard/CopyUrlButton';
 import { defaultTemplates } from '@/app/components/templates/defaults';
+import AppSidebar from '@/app/components/layout/AppSidebar';
+import WebsitesFilters from './WebsitesFilters';
 
 type WebsitesPageProps = {
     searchParams: Promise<{
@@ -33,6 +32,9 @@ type WebsitesPageProps = {
 export default async function WebsitesPage({ searchParams }: WebsitesPageProps) {
     const session = await requireUser();
     const params = await searchParams;
+    const isAdmin =
+        session.user.role === 'ADMIN' ||
+        session.user.email?.toLowerCase() === 'wahidikqbal@gmail.com';
 
     const profileImage = session.user.image || '/default-avatar.svg';
     const profileName = session.user.name?.trim() || session.user.email?.split('@')[0] || 'User';
@@ -68,14 +70,6 @@ export default async function WebsitesPage({ searchParams }: WebsitesPageProps) 
     const draftCount = totalWebsite - publishedCount;
     const totalViews = allPages.reduce((acc, page) => acc + (page.isPublished ? 7 : 1), 0);
 
-    const navItems = [
-        { label: 'Dashboard', icon: LayoutGrid, href: '/dashboard', active: false, disabled: false },
-        { label: 'Websites', icon: Globe, href: '/websites', active: true, disabled: false },
-        { label: 'Subscriptions', icon: CreditCard, href: '', active: false, disabled: true },
-        { label: 'Analytics', icon: BarChart3, href: '', active: false, disabled: true },
-        { label: 'Templates', icon: FolderKanban, href: '/templates', active: false, disabled: false },
-    ];
-
     const formatDate = (date: Date) =>
         new Intl.DateTimeFormat('id-ID', {
             day: '2-digit',
@@ -85,89 +79,22 @@ export default async function WebsitesPage({ searchParams }: WebsitesPageProps) 
 
     const getTemplateThumbnailClass = (templateId: string) =>
         defaultTemplates.find((template) => template.id === templateId)?.thumbnail || 'bg-slate-100';
+    const getTemplateName = (templateId: string) =>
+        defaultTemplates.find((template) => template.id === templateId)?.name || 'Custom Template';
 
     return (
         <main className="min-h-screen bg-slate-50">
             <div className="mx-auto flex min-h-screen w-full">
-                <aside className="hidden w-72 shrink-0 border-r border-slate-200 bg-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
-                    <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-5">
-                        <Store className="text-blue-600" size={22} />
-                        <span className="text-2xl font-bold text-slate-900">page builder</span>
-                    </div>
-
-                    <div className="px-3 pt-5">
-                        <p className="px-3 text-xs font-semibold tracking-wide text-slate-400">MAIN</p>
-                        <nav className="mt-2 space-y-1.5">
-                            {navItems.slice(0, 4).map((item) => {
-                                const Icon = item.icon;
-                                if (item.disabled) {
-                                    return (
-                                        <div key={item.label} className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400">
-                                            <span className="flex items-center gap-3">
-                                                <Icon size={18} />
-                                                {item.label}
-                                            </span>
-                                            <span className="text-[10px] font-semibold uppercase tracking-wide">Soon</span>
-                                        </div>
-                                    );
-                                }
-                                return (
-                                    <Link
-                                        key={item.label}
-                                        href={item.href}
-                                        className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${item.active ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100'}`}
-                                    >
-                                        <Icon size={18} />
-                                        {item.label}
-                                    </Link>
-                                );
-                            })}
-                        </nav>
-
-                        <p className="mt-8 px-3 text-xs font-semibold tracking-wide text-slate-400">OTHER</p>
-                        <nav className="mt-2 space-y-1.5">
-                            {navItems.slice(4).map((item) => {
-                                const Icon = item.icon;
-                                return (
-                                    <Link
-                                        key={item.label}
-                                        href={item.href}
-                                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
-                                    >
-                                        <Icon size={18} />
-                                        {item.label}
-                                    </Link>
-                                );
-                            })}
-                        </nav>
-                    </div>
-
-                    <div className="border-t border-slate-200 p-4 mt-8">
-                        <div className="flex items-center gap-3">
-                            <div className="h-11 w-11 rounded-full border border-slate-200 bg-cover bg-center bg-slate-100" style={{ backgroundImage: `url('${profileImage}')` }} />
-                            <div className="min-w-0">
-                                <p className="truncate text-sm font-semibold text-slate-900">{profileName}</p>
-                                <p className="truncate text-xs text-slate-500">{session.user.email}</p>
-                            </div>
-                        </div>
-                        <div className="mt-3 flex gap-2">
-                            <Link
-                                href="/dashboard"
-                                className="rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100"
-                            >
-                                Dashboard
-                            </Link>
-                            <form action={signOutAction}>
-                                <button
-                                    type="submit"
-                                    className="rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100"
-                                >
-                                    Sign out
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </aside>
+                <AppSidebar
+                    active="websites"
+                    user={{
+                        name: profileName,
+                        email: session.user.email ?? '',
+                        image: profileImage,
+                    }}
+                    isAdmin={isAdmin}
+                    footerLink={{ href: '/dashboard', label: 'Dashboard' }}
+                />
 
                 <section className="flex-1">
                     <div className="border-b border-slate-200 bg-white px-4 py-4 sm:px-6 lg:px-10">
@@ -226,41 +153,12 @@ export default async function WebsitesPage({ searchParams }: WebsitesPageProps) 
                         </div>
 
                         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-4">
-                            <form className="grid gap-3 md:grid-cols-[1fr_auto_auto_auto]">
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                                    <input
-                                        type="text"
-                                        name="q"
-                                        defaultValue={params.q ?? ''}
-                                        placeholder="Cari website..."
-                                        className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm outline-none focus:border-blue-400"
-                                    />
-                                </div>
-                                <select
-                                    name="status"
-                                    defaultValue={selectedStatus}
-                                    className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700"
-                                >
-                                    <option value="all">Semua Status</option>
-                                    <option value="published">Published</option>
-                                    <option value="draft">Draft</option>
-                                </select>
-                                <select
-                                    name="sort"
-                                    defaultValue={selectedSort}
-                                    className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700"
-                                >
-                                    <option value="newest">Terbaru</option>
-                                    <option value="oldest">Terlama</option>
-                                </select>
-                                <button
-                                    type="submit"
-                                    className="h-11 rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-800"
-                                >
-                                    Terapkan
-                                </button>
-                            </form>
+                            <WebsitesFilters
+                                key={`${params.q ?? ''}|${selectedStatus}|${selectedSort}`}
+                                initialQuery={params.q ?? ''}
+                                initialStatus={selectedStatus}
+                                initialSort={selectedSort}
+                            />
                         </section>
 
                         <section className="mt-6">
@@ -269,50 +167,71 @@ export default async function WebsitesPage({ searchParams }: WebsitesPageProps) 
                                     <p className="text-sm text-slate-500">Belum ada website yang sesuai filter.</p>
                                 </div>
                             ) : (
-                                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
                                     {pages.map((page) => {
                                         const siteUrl = `http://${page.subdomain}.localhost:3000`;
                                         const simulatedViews = page.isPublished ? 7 : 1;
                                         return (
-                                            <article key={page.id} className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                                                <div className={`relative h-44 ${getTemplateThumbnailClass(page.templateId)} p-3`}>
-                                                    <span className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-semibold ${page.isPublished ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                                            <article
+                                                key={page.id}
+                                                className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-2xl"
+                                            >
+                                                <div className={`relative h-48 ${getTemplateThumbnailClass(page.templateId)} p-4`}>
+                                                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-slate-900/20" />
+                                                    <span className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm ${page.isPublished ? 'bg-emerald-100/95 text-emerald-700' : 'bg-amber-100/95 text-amber-700'}`}>
                                                         {page.isPublished ? 'Published' : 'Draft'}
                                                     </span>
-                                                    <div className="mx-auto h-full w-4/5 rounded-lg bg-white/70 p-3">
-                                                        <div className="h-2 w-2/3 rounded bg-slate-200" />
-                                                        <div className="mt-2 space-y-1.5">
-                                                            <div className="h-1.5 w-full rounded bg-slate-200" />
-                                                            <div className="h-1.5 w-5/6 rounded bg-slate-200" />
-                                                            <div className="h-1.5 w-3/5 rounded bg-slate-200" />
+                                                    <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-white/50 bg-white/75 px-2.5 py-1 text-[11px] font-semibold text-slate-700 backdrop-blur-sm">
+                                                        <Sparkles size={12} />
+                                                        {getTemplateName(page.templateId)}
+                                                    </div>
+                                                    <div className="mx-auto h-3/4 w-3/4 rounded-lg border border-white/70 bg-white/75 p-3 shadow-lg opacity-70 scale-95 transition-transform duration-300 group-hover:scale-100">
+                                                        <div className="h-3 w-1/3 rounded bg-slate-200" />
+                                                        <div className="mt-2.5 space-y-2">
+                                                            <div className="h-2 w-full rounded bg-slate-200" />
+                                                            <div className="h-2 w-5/6 rounded bg-slate-200" />
+                                                            <div className="h-2 w-3/5 rounded bg-slate-200" />
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div className="p-4">
+                                                <div className="flex flex-1 flex-col space-y-4 p-6">
                                                     <div className="flex items-start justify-between gap-2">
-                                                        <h3 className="text-xl font-bold text-slate-900">{page.name}</h3>
-                                                        <span className="rounded-md p-1 text-slate-400"><MoreVertical size={16} /></span>
+                                                        <div className="min-w-0">
+                                                            <h3 className="truncate text-xl font-bold text-slate-900">{page.name}</h3>
+                                                            <p className="mt-0.5 text-xs text-slate-500">@{page.subdomain}</p>
+                                                        </div>
+                                                        <span className="rounded-lg border border-slate-200 bg-slate-50 p-1.5 text-slate-400">
+                                                            <MoreVertical size={16} />
+                                                        </span>
                                                     </div>
 
                                                     {page.isPublished ? (
-                                                        <div className="mt-2 flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5">
-                                                            <p className="truncate text-xs text-slate-600">{siteUrl}</p>
+                                                        <div className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-slate-50/80 px-2.5 py-2">
+                                                            <p className="truncate text-xs font-medium text-slate-700">{siteUrl}</p>
                                                             <CopyUrlButton url={siteUrl} />
                                                         </div>
                                                     ) : (
-                                                        <p className="mt-2 text-xs text-slate-500">URL belum aktif. Publish website terlebih dahulu.</p>
+                                                        <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                                                            URL belum aktif. Publish website terlebih dahulu.
+                                                        </div>
                                                     )}
 
-                                                    <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
-                                                        <span>Terakhir diubah: {formatDate(page.updatedAt)}</span>
-                                                        <span>Views: {simulatedViews}</span>
+                                                    <div className="grid grid-cols-2 gap-2 text-xs">
+                                                        <div className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-slate-600">
+                                                            <Clock3 size={13} />
+                                                            {formatDate(page.updatedAt)}
+                                                        </div>
+                                                        <div className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-slate-600">
+                                                            <Eye size={13} />
+                                                            {simulatedViews} views
+                                                        </div>
                                                     </div>
 
-                                                    <div className="mt-4 grid grid-cols-2 gap-2">
+                                                    <div className="sticky bottom-0 z-10 -mx-6 mt-auto grid grid-cols-2 gap-2 border-t border-slate-100 bg-white/95 px-6 pt-3 pb-0 backdrop-blur-sm md:static md:mx-0 md:bg-transparent md:px-0 md:pb-0 md:backdrop-blur-none">
                                                         <Link
                                                             href={`/edit/${page.id}`}
-                                                            className="col-span-2 inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+                                                            className="col-span-2 inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
                                                         >
                                                             Edit Website
                                                         </Link>
@@ -321,8 +240,9 @@ export default async function WebsitesPage({ searchParams }: WebsitesPageProps) 
                                                                 href={siteUrl}
                                                                 target="_blank"
                                                                 rel="noreferrer"
-                                                                className="inline-flex w-full items-center justify-center rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100"
+                                                                className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"
                                                             >
+                                                                <Link2 size={13} />
                                                                 Visit Website
                                                             </a>
                                                         ) : (
@@ -330,7 +250,7 @@ export default async function WebsitesPage({ searchParams }: WebsitesPageProps) 
                                                                 <input type="hidden" name="pageId" value={page.id} />
                                                                 <button
                                                                     type="submit"
-                                                                    className="w-full rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-100"
+                                                                    className="w-full rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100"
                                                                 >
                                                                     Publish
                                                                 </button>
@@ -341,6 +261,7 @@ export default async function WebsitesPage({ searchParams }: WebsitesPageProps) 
                                                                 action={deletePageAction}
                                                                 pageId={page.id}
                                                                 pageName={page.name}
+                                                                compact
                                                             />
                                                         </div>
                                                     </div>

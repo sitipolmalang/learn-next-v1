@@ -33,6 +33,7 @@ export default function EditorToolbar({
     const [isPublishOpen, setIsPublishOpen] = useState(false);
     const [isPublishing, setIsPublishing] = useState(false);
     const [customSubdomain, setCustomSubdomain] = useState('');
+    const [publishError, setPublishError] = useState<string | null>(null);
 
     const sanitizedSubdomain = useMemo(
         () =>
@@ -49,9 +50,18 @@ export default function EditorToolbar({
         ? `http://${sanitizedSubdomain}.localhost:3000`
         : '';
 
+    const mapPublishError = (status: number, message?: string) => {
+        if (status === 409) return 'Subdomain sudah dipakai.';
+        if (status === 401 || status === 403) return 'Sesi login berakhir. Silakan login lagi.';
+        if (message?.trim()) return message;
+        return 'Publish gagal. Coba ulang beberapa saat lagi.';
+    };
+
     const handlePublish = async () => {
+        setPublishError(null);
+
         if (!publishUrl) {
-            window.alert('Subdomain belum tersedia untuk halaman ini.');
+            setPublishError('Subdomain belum tersedia untuk halaman ini.');
             return;
         }
 
@@ -68,7 +78,7 @@ export default function EditorToolbar({
             } else {
                 const rawBlocks = localStorage.getItem(storageKey);
                 if (!rawBlocks) {
-                    window.alert('Data halaman belum tersedia. Silakan coba lagi.');
+                    setPublishError('Data halaman belum tersedia. Silakan coba lagi.');
                     return;
                 }
 
@@ -85,13 +95,24 @@ export default function EditorToolbar({
             }
 
             if (!response.ok) {
-                throw new Error('Publish gagal');
+                let message: string | undefined;
+                try {
+                    const data = (await response.json()) as { error?: string };
+                    message = data.error;
+                } catch {
+                    message = undefined;
+                }
+                throw new Error(mapPublishError(response.status, message));
             }
 
             window.open(publishUrl, '_blank', 'noopener,noreferrer');
             setIsPublishOpen(false);
-        } catch {
-            window.alert('Publish gagal. Coba ulang beberapa saat lagi.');
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error && error.message
+                    ? error.message
+                    : 'Publish gagal. Coba ulang beberapa saat lagi.';
+            setPublishError(message);
         } finally {
             setIsPublishing(false);
         }
@@ -124,7 +145,10 @@ export default function EditorToolbar({
                     </button>
 
                     <button
-                        onClick={() => setIsPublishOpen(true)}
+                        onClick={() => {
+                            setPublishError(null);
+                            setIsPublishOpen(true);
+                        }}
                         className="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-50 text-emerald-700 rounded-md text-[11px] sm:text-xs font-bold hover:bg-emerald-100 transition-colors border border-emerald-100"
                         title="Publish Website"
                     >
@@ -231,11 +255,20 @@ export default function EditorToolbar({
                             <p className="text-xs text-gray-500">
                                 URL publish: {publishUrl || 'http://subdomain.localhost:3000'}
                             </p>
+
+                            {publishError && (
+                                <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+                                    {publishError}
+                                </div>
+                            )}
                         </div>
 
                         <div className="px-5 py-4 border-t border-gray-100 flex justify-end gap-2">
                             <button
-                                onClick={() => setIsPublishOpen(false)}
+                                onClick={() => {
+                                    setPublishError(null);
+                                    setIsPublishOpen(false);
+                                }}
                                 className="px-3 py-2 text-sm rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50"
                             >
                                 Batal

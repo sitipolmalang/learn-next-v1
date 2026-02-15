@@ -6,6 +6,7 @@ import { LayoutTemplate, ArrowRight, ExternalLink } from 'lucide-react';
 import { defaultTemplates } from '../components/templates/defaults';
 import { Template, TemplateCategory, TEMPLATE_CATEGORIES, } from '../components/templates/types';
 import { useMemo, useState } from 'react';
+import SearchField from '../components/ui/SearchField';
 
 export default function TemplatesPage() {
     const router = useRouter();
@@ -29,8 +30,28 @@ export default function TemplatesPage() {
         });
     }, [activeCategory, search]);
 
-    const handleSelectTemplate = (templateId: string) => {
-        router.push(`/edit?templateId=${templateId}`);
+    const navigateWithAuthGuard = async (target: string) => {
+        try {
+            const response = await fetch('/api/auth/session', { cache: 'no-store' });
+            if (!response.ok) {
+                router.push('/login');
+                return;
+            }
+
+            const session = (await response.json()) as { user?: { id?: string } } | null;
+            if (!session?.user?.id) {
+                router.push('/login');
+                return;
+            }
+
+            router.push(target);
+        } catch {
+            router.push('/login');
+        }
+    };
+
+    const handleSelectTemplate = async (templateId: string) => {
+        await navigateWithAuthGuard(`/edit?templateId=${templateId}`);
     };
 
     // Fungsi untuk membuka preview di tab baru, HARUS DIGANTI
@@ -65,25 +86,25 @@ export default function TemplatesPage() {
                 {/* Search + Category */}
                 <div className="max-w-3xl mx-auto mb-12 space-y-5">
                     {/* Search */}
-                    <input
+                    <SearchField
                         value={search}
-                        onChange={e => setSearch(e.target.value)}
+                        onChange={(e) => setSearch(e.target.value)}
                         placeholder="Cari template, industri..."
-                        className="w-full px-5 py-3 rounded-xl border text-sm focus:ring-2 focus:ring-blue-500"
                     />
 
                     {/* Category Pills */}
-                    <div className="w-full">
-                        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 flex-nowrap'>
-                            {TEMPLATE_CATEGORIES.map(cat => (
-                                <button key={cat.key}
+                    <div className="w-full rounded-2xl border border-slate-200 bg-white p-2 sm:p-3">
+                        <div className="flex flex-wrap gap-2">
+                            {TEMPLATE_CATEGORIES.map((cat) => (
+                                <button
+                                    key={cat.key}
                                     onClick={() => setActiveCategory(cat.key)}
-                                    className={`px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${activeCategory === cat.key
-                                        ? 'bg-slate-900 text-white'
-                                        : 'bg-white text-slate-600 border hover:bg-slate-50'
+                                    className={`inline-flex min-h-10 items-center justify-center rounded-xl px-4 py-2 text-xs font-semibold leading-tight transition-all sm:text-sm ${activeCategory === cat.key
+                                        ? 'bg-slate-900 text-white shadow-sm'
+                                        : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                                         }`}
                                 >
-                                    {cat.label}
+                                    <span className="break-words text-center">{cat.label}</span>
                                 </button>
                             ))}
                         </div>
@@ -92,7 +113,7 @@ export default function TemplatesPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {/* Blank Canvas Option */}
-                    <div onClick={() => router.push('/edit')}
+                    <div onClick={() => void navigateWithAuthGuard('/edit')}
                         className="group cursor-pointer bg-white rounded-2xl border-2 border-dashed border-gray-300 hover:border-blue-500 hover:shadow-xl transition-all p-8 flex flex-col items-center justify-center min-h-75">
                         <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mb-6 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -107,7 +128,7 @@ export default function TemplatesPage() {
                     {filteredTemplates.map(template => (
                         <div
                             key={template.id}
-                            onClick={() => handleSelectTemplate(template.id)}
+                            onClick={() => void handleSelectTemplate(template.id)}
                             className="group cursor-pointer bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-2xl hover:border-blue-500/50 transition-all transform hover:-translate-y-1"
                         >
                             {/* Thumbnail */}
